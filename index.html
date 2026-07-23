@@ -1,20 +1,5115 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FlowTrace 连通性测试</title>
-  <style>
-    body { font-family: sans-serif; padding: 40px; background: #071b17; color: #eee; }
-    main { max-width: 680px; margin: 80px auto; padding: 32px; border: 1px solid #38a887; border-radius: 20px; }
-    h1 { color: #70edc2; }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>FlowTrace 页面加载成功</h1>
-    <p>这是空白的 GitHub Pages 连通性测试，不包含任何项目数据。</p>
-    <p>如果手机和其他电脑都能看到本页，说明可以继续。</p>
-  </main>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#07110e" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'sha256-gldAaZaQGgBgK1fTUfkt78zk77hrByu12w6HrX3zOYQ='; style-src 'sha256-HT3ETwcFiewlCMTp/7+VZIcWd792hBbIVnQVR9u+1co='; connect-src https://api.github.com; img-src data:; font-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';"
+    />
+    <meta
+      name="description"
+      content="FlowTrace — 私密、可复盘的 Innovus 后端流程工作台"
+    />
+    <title>FlowTrace</title>
+    <style>:root {
+  --bg: #07110e;
+  --bg-soft: #0a1713;
+  --surface: rgba(15, 31, 25, 0.94);
+  --surface-2: #12251e;
+  --surface-3: #173026;
+  --line: rgba(171, 211, 193, 0.14);
+  --line-strong: rgba(171, 211, 193, 0.28);
+  --text: #eef8f2;
+  --text-soft: #b6c9bf;
+  --muted: #81988d;
+  --green: #7ee2b8;
+  --green-strong: #37c889;
+  --green-deep: #1b8d62;
+  --mint: #b7f5d9;
+  --amber: #f3c978;
+  --red: #ff8e8e;
+  --blue: #83c7ff;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --sidebar: 270px;
+  --font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Microsoft YaHei", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 12% -5%, rgba(55, 200, 137, 0.17), transparent 34rem),
+    radial-gradient(circle at 92% 10%, rgba(54, 126, 96, 0.13), transparent 30rem),
+    linear-gradient(150deg, #07110e 0%, #081610 45%, #050b09 100%);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  color: inherit;
+}
+
+a {
+  color: var(--green);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 1000;
+  top: 8px;
+  left: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--bg);
+  transform: translateY(-150%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(126, 226, 184, 0.72);
+  outline-offset: 3px;
+}
+
+.boot-screen {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  color: var(--text-soft);
+}
+
+.boot-mark,
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(126, 226, 184, 0.4);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(126, 226, 184, 0.22), rgba(12, 34, 27, 0.8));
+  color: var(--mint);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  box-shadow: 0 0 40px rgba(55, 200, 137, 0.14);
+}
+
+.boot-mark {
+  animation: breathe 2s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% {
+    transform: translateY(-4px);
+    box-shadow: 0 0 52px rgba(55, 200, 137, 0.28);
+  }
+}
+
+.lock-shell {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.75fr);
+  align-items: center;
+  gap: clamp(36px, 7vw, 110px);
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 64px 0;
+}
+
+.lock-shell::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  opacity: 0.3;
+  background-image:
+    linear-gradient(rgba(151, 207, 180, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(151, 207, 180, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(circle at center, black, transparent 78%);
+}
+
+.lock-intro {
+  max-width: 670px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+}
+
+.lock-title {
+  margin: 0;
+  max-width: 720px;
+  font-size: clamp(42px, 6vw, 78px);
+  font-weight: 690;
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+}
+
+.lock-title em {
+  color: var(--green);
+  font-style: normal;
+}
+
+.lock-copy {
+  max-width: 600px;
+  margin: 24px 0 0;
+  color: var(--text-soft);
+  font-size: clamp(16px, 1.8vw, 19px);
+}
+
+.privacy-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.privacy-point {
+  min-height: 112px;
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(12, 25, 20, 0.62);
+}
+
+.privacy-point strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.privacy-point span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.connect-card {
+  position: relative;
+  padding: clamp(24px, 3vw, 34px);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(165deg, rgba(23, 48, 38, 0.9), rgba(9, 20, 16, 0.96)),
+    var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.connect-card::after {
+  content: "";
+  position: absolute;
+  top: -70px;
+  right: -70px;
+  width: 170px;
+  height: 170px;
+  border: 1px solid rgba(126, 226, 184, 0.12);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 24px rgba(126, 226, 184, 0.02),
+    0 0 0 52px rgba(126, 226, 184, 0.015);
+  pointer-events: none;
+}
+
+.connect-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 25px;
+}
+
+.connect-head h2,
+.panel-title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.connect-head p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.form-grid,
+.stack {
+  display: grid;
+  gap: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field > span,
+.field > label,
+.field-label {
+  color: var(--text-soft);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.015em;
+}
+
+.field small,
+.help,
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 11px;
+  outline: none;
+  background: rgba(4, 12, 9, 0.72);
+  color: var(--text);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+textarea {
+  min-height: 118px;
+  resize: vertical;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: rgba(126, 226, 184, 0.38);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(126, 226, 184, 0.11);
+  background: rgba(4, 12, 9, 0.92);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #5d7167;
+}
+
+select {
+  cursor: pointer;
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--text-soft);
+  font-size: 13px;
+}
+
+.checkbox input {
+  flex: 0 0 auto;
+  width: 18px;
+  min-height: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--green-strong);
+}
+
+.security-note,
+.callout {
+  padding: 13px 14px;
+  border: 1px solid rgba(243, 201, 120, 0.18);
+  border-radius: 11px;
+  background: rgba(243, 201, 120, 0.06);
+  color: #d9cab0;
+  font-size: 12px;
+}
+
+.security-note strong,
+.callout strong {
+  color: var(--amber);
+}
+
+.error-box {
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 142, 142, 0.25);
+  border-radius: 11px;
+  background: rgba(255, 142, 142, 0.08);
+  color: #ffc1c1;
+  font-size: 13px;
+}
+
+.btn,
+button.btn {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border: 1px solid var(--line-strong);
+  border-radius: 11px;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 680;
+  font-size: 13px;
+  transition:
+    transform 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(126, 226, 184, 0.46);
+  background: var(--surface-3);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.btn-primary {
+  border-color: transparent;
+  background: linear-gradient(145deg, var(--green), var(--green-strong));
+  color: #052016;
+  box-shadow: 0 10px 30px rgba(55, 200, 137, 0.15);
+}
+
+.btn-primary:hover:not(:disabled) {
+  border-color: transparent;
+  background: linear-gradient(145deg, #9aebc9, #45d699);
+}
+
+.btn-danger {
+  border-color: rgba(255, 142, 142, 0.24);
+  background: rgba(255, 142, 142, 0.08);
+  color: #ffc0c0;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-soft);
+}
+
+.btn-small {
+  min-height: 34px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
+  grid-template-rows: 74px minmax(0, 1fr);
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+}
+
+.topbar {
+  grid-area: topbar;
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 26px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(7, 17, 14, 0.82);
+  backdrop-filter: blur(18px);
+}
+
+.topbar-title {
+  min-width: 0;
+}
+
+.topbar-title h1 {
+  overflow: hidden;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 720;
+  letter-spacing: -0.025em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-title p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.topbar-actions,
+.panel-actions,
+.inline-actions,
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.sync-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.sync-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.sync-state.is-clean .sync-dot {
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(126, 226, 184, 0.6);
+}
+
+.sync-state.is-dirty .sync-dot {
+  background: var(--amber);
+}
+
+.sync-state.is-error .sync-dot {
+  background: var(--red);
+}
+
+.sidebar {
+  grid-area: sidebar;
+  position: fixed;
+  z-index: 30;
+  inset: 0 auto 0 0;
+  width: var(--sidebar);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 14px;
+  border-right: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(55, 200, 137, 0.09), transparent 16rem),
+    rgba(7, 17, 14, 0.96);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 8px 18px;
+}
+
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  font-size: 13px;
+}
+
+.brand-copy strong {
+  display: block;
+  letter-spacing: -0.02em;
+}
+
+.brand-copy span {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-list,
+.flow-list {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-button,
+.flow-button {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 11px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  text-align: left;
+}
+
+.nav-button:hover,
+.flow-button:hover {
+  background: rgba(126, 226, 184, 0.06);
+  color: var(--text);
+}
+
+.nav-button.is-active,
+.flow-button.is-active {
+  border-color: rgba(126, 226, 184, 0.15);
+  background: rgba(126, 226, 184, 0.1);
+  color: var(--mint);
+}
+
+.nav-icon {
+  width: 22px;
+  color: var(--green);
+  font-size: 15px;
+  text-align: center;
+}
+
+.sidebar-section {
+  min-height: 0;
+  margin-top: 24px;
+}
+
+.sidebar-section-grow {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 8px 8px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.flow-button {
+  align-items: flex-start;
+}
+
+.flow-button-copy {
+  min-width: 0;
+}
+
+.flow-button-copy strong {
+  display: block;
+  overflow: hidden;
+  color: inherit;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-button-copy span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.sidebar-footer {
+  padding: 12px 6px 0;
+  border-top: 1px solid var(--line);
+}
+
+.connection-chip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.connection-chip span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+.sidebar-scrim {
+  display: none;
+}
+
+.main {
+  grid-area: main;
+  min-width: 0;
+  width: 100%;
+  max-width: 1540px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.page-head h2 {
+  margin: 0;
+  font-size: clamp(25px, 3vw, 36px);
+  letter-spacing: -0.045em;
+}
+
+.page-head p {
+  max-width: 720px;
+  margin: 7px 0 0;
+  color: var(--text-soft);
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.metric-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: linear-gradient(145deg, rgba(18, 37, 30, 0.8), rgba(10, 23, 18, 0.82));
+}
+
+.metric-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+
+.metric-value {
+  display: block;
+  overflow: hidden;
+  margin-top: 7px;
+  font-size: clamp(20px, 2.5vw, 30px);
+  font-weight: 720;
+  letter-spacing: -0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric-foot {
+  margin-top: 4px;
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.panel {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(10, 23, 18, 0.76);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.1);
+}
+
+.panel + .panel {
+  margin-top: 16px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.panel-head p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(330px, 0.8fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.flow-map {
+  display: grid;
+  gap: 14px;
+}
+
+.flow-line {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(105px, 1fr));
+  gap: 9px;
+}
+
+.flow-branch-grid {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.branch-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 78px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.branch-stages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 9px;
+}
+
+.branch-stages.is-single {
+  grid-template-columns: minmax(120px, 1fr);
+}
+
+.stage-card {
+  position: relative;
+  min-width: 0;
+  min-height: 78px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 11px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(14, 29, 23, 0.9);
+  color: var(--text-soft);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.stage-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(126, 226, 184, 0.38);
+}
+
+.stage-card.is-selected {
+  border-color: rgba(126, 226, 184, 0.68);
+  background: linear-gradient(145deg, rgba(27, 141, 98, 0.25), rgba(14, 29, 23, 0.9));
+  box-shadow: 0 0 0 2px rgba(126, 226, 184, 0.07);
+}
+
+.stage-card.is-current::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(126, 226, 184, 0.7);
+}
+
+.stage-card.status-done {
+  border-color: rgba(126, 226, 184, 0.22);
+  background: rgba(27, 91, 67, 0.32);
+}
+
+.stage-card.status-blocked {
+  border-color: rgba(255, 142, 142, 0.32);
+  background: rgba(100, 32, 36, 0.25);
+}
+
+.stage-card.status-review {
+  border-color: rgba(243, 201, 120, 0.28);
+}
+
+.stage-number {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.stage-name {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 680;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+}
+
+.stage-status-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 7px;
+  display: block;
+  appearance: none;
+  overflow: hidden;
+  border: 0;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.progress-track::-webkit-progress-bar {
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.progress-track::-webkit-progress-value {
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green-deep), var(--green));
+}
+
+.progress-track::-moz-progress-bar {
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green-deep), var(--green));
+}
+
+.progress-bar {
+  width: var(--progress, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green-deep), var(--green));
+  transition: width 300ms ease;
+}
+
+.stage-focus {
+  position: sticky;
+  top: 94px;
+}
+
+.stage-focus-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.stage-focus-title h3 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.03em;
+}
+
+.stage-focus-title p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.status-pill,
+.type-pill,
+.priority-pill,
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 680;
+  white-space: nowrap;
+}
+
+.status-pill.is-done,
+.status-pill.is-success {
+  border-color: rgba(126, 226, 184, 0.25);
+  background: rgba(126, 226, 184, 0.08);
+  color: var(--green);
+}
+
+.status-pill.is-blocked,
+.priority-pill.is-critical {
+  border-color: rgba(255, 142, 142, 0.24);
+  background: rgba(255, 142, 142, 0.08);
+  color: var(--red);
+}
+
+.status-pill.is-review,
+.priority-pill.is-high {
+  border-color: rgba(243, 201, 120, 0.24);
+  background: rgba(243, 201, 120, 0.08);
+  color: var(--amber);
+}
+
+.stage-description {
+  margin: 0 0 18px;
+  padding: 13px 14px;
+  border-left: 2px solid rgba(126, 226, 184, 0.4);
+  background: rgba(126, 226, 184, 0.04);
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.gate-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gate-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(4, 12, 9, 0.32);
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.gate-item input {
+  width: 17px;
+  min-height: 17px;
+  height: 17px;
+  margin-top: 1px;
+  accent-color: var(--green-strong);
+}
+
+.gate-item:has(input:checked) span {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.quick-create {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.quick-create .btn {
+  padding-inline: 7px;
+}
+
+.record-toolbar {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(3, minmax(130px, 0.35fr));
+  gap: 9px;
+  margin-bottom: 16px;
+}
+
+.record-list,
+.timeline {
+  display: grid;
+  gap: 10px;
+}
+
+.record-card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(13, 27, 22, 0.82);
+}
+
+.record-card:hover {
+  border-color: rgba(126, 226, 184, 0.25);
+}
+
+.record-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.record-title-wrap {
+  min-width: 0;
+}
+
+.record-title {
+  margin: 7px 0 0;
+  font-size: 15px;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+.record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.record-content {
+  margin: 12px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--text-soft);
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+
+.record-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 13px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  min-height: 21px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.attachment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.attachment-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(4, 12, 9, 0.45);
+}
+
+.attachment-card img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: #020605;
+}
+
+.attachment-card a,
+.attachment-file {
+  display: block;
+  overflow: hidden;
+  padding: 8px;
+  color: var(--text-soft);
+  font-size: 10px;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty-state {
+  display: grid;
+  place-items: center;
+  min-height: 190px;
+  padding: 30px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  text-align: center;
+}
+
+.empty-state strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text-soft);
+}
+
+.backup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.backup-card {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(13, 27, 22, 0.76);
+}
+
+.backup-card h3 {
+  margin: 0 0 7px;
+  font-size: 16px;
+}
+
+.backup-card p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.connection-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.detail-item {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.detail-item span {
+  display: block;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.detail-item strong {
+  display: block;
+  overflow: hidden;
+  margin-top: 4px;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modal-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 7, 5, 0.76);
+  backdrop-filter: blur(9px);
+  animation: fade-in 160ms ease both;
+}
+
+.modal {
+  width: min(700px, 100%);
+  max-height: min(88vh, 900px);
+  overflow-y: auto;
+  padding: 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xl);
+  background: #0c1d17;
+  box-shadow: var(--shadow);
+  animation: modal-in 180ms ease both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px) scale(0.985);
+  }
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: -0.025em;
+}
+
+.modal-head p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.icon-button {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text-soft);
+  cursor: pointer;
+}
+
+.toast-region {
+  position: fixed;
+  z-index: 150;
+  right: 20px;
+  bottom: 20px;
+  width: min(380px, calc(100% - 40px));
+  display: grid;
+  gap: 9px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 13px 15px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: rgba(15, 31, 25, 0.97);
+  color: var(--text-soft);
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  animation: toast-in 180ms ease both;
+}
+
+.toast.is-success {
+  border-color: rgba(126, 226, 184, 0.35);
+}
+
+.toast.is-error {
+  border-color: rgba(255, 142, 142, 0.35);
+  color: #ffc5c5;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.busy-overlay {
+  position: fixed;
+  z-index: 140;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 8, 6, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.busy-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 17px;
+  border: 1px solid var(--line-strong);
+  border-radius: 13px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--text-soft);
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(126, 226, 184, 0.18);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.danger-zone {
+  border-color: rgba(255, 142, 142, 0.2);
+  background: rgba(255, 142, 142, 0.035);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Markup alignment for the generated application */
+.is-locked .lock-shell {
+  grid-template-columns: minmax(0, 680px);
+  justify-content: center;
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-lockup .eyebrow {
+  margin-bottom: 4px;
+}
+
+.brand-lockup h1 {
+  margin: 0;
+  font-size: clamp(27px, 3vw, 38px);
+  letter-spacing: -0.045em;
+}
+
+.brand-lockup.compact {
+  flex: 0 0 auto;
+}
+
+.brand-lockup.compact .brand-mark {
+  width: 38px;
+  height: 38px;
+}
+
+.brand-lockup.compact strong,
+.brand-lockup.compact small {
+  display: block;
+}
+
+.brand-lockup.compact small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.connect-lede {
+  margin: 17px 0 22px;
+  color: var(--text-soft);
+}
+
+.connect-form {
+  display: grid;
+  gap: 14px;
+}
+
+.connect-help {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.connect-help summary {
+  cursor: pointer;
+  color: var(--text-soft);
+}
+
+.connect-help p {
+  margin: 9px 0 0;
+  padding-left: 13px;
+  border-left: 2px solid var(--line-strong);
+}
+
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.check-row input,
+.gate-row input {
+  flex: 0 0 auto;
+  width: 17px;
+  min-height: 17px;
+  height: 17px;
+  margin: 1px 0 0;
+  padding: 0;
+  border-radius: 4px;
+  accent-color: var(--green-strong);
+}
+
+.check-row small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.btn-wide {
+  width: 100%;
+}
+
+.btn-icon {
+  flex: 0 0 auto;
+  width: 40px;
+  min-width: 40px;
+  padding-inline: 0;
+}
+
+.btn-secondary {
+  border-color: rgba(126, 226, 184, 0.28);
+  color: var(--mint);
+}
+
+.notice {
+  padding: 12px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 11px;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.notice-danger {
+  border-color: rgba(255, 142, 142, 0.3);
+  background: rgba(255, 142, 142, 0.08);
+  color: #ffc5c5;
+}
+
+.notice-warning {
+  border-color: rgba(243, 201, 120, 0.28);
+  background: rgba(243, 201, 120, 0.07);
+  color: #e9d2a7;
+}
+
+.sidebar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 7px 14px;
+}
+
+.sidebar-heading .eyebrow {
+  margin-bottom: 2px;
+  font-size: 9px;
+}
+
+.sidebar-heading h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.flow-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  align-content: start;
+}
+
+.flow-row {
+  width: 100%;
+  min-height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  text-align: left;
+}
+
+.flow-row:hover {
+  background: rgba(126, 226, 184, 0.05);
+}
+
+.flow-row.is-active {
+  border-color: rgba(126, 226, 184, 0.2);
+  background: rgba(126, 226, 184, 0.09);
+  color: var(--mint);
+}
+
+.flow-row-main {
+  min-width: 0;
+}
+
+.flow-row-main strong,
+.flow-row-main small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-row-main strong {
+  font-size: 12px;
+}
+
+.flow-row-main small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.flow-row-progress {
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.sidebar-toggle {
+  margin: 12px 6px;
+}
+
+.sidebar-foot {
+  padding: 13px 7px 2px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.sidebar-foot p {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 4px;
+  font-size: 10px;
+}
+
+.sidebar-foot small {
+  display: block;
+  overflow: hidden;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-context {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sync-dot.is-synced {
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(126, 226, 184, 0.62);
+}
+
+.sync-dot.is-dirty {
+  background: var(--amber);
+}
+
+.sync-dot.is-conflict {
+  background: var(--red);
+}
+
+.run-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.run-title {
+  min-width: 220px;
+}
+
+.run-title .eyebrow {
+  margin-bottom: 6px;
+}
+
+.run-title h1 {
+  overflow-wrap: anywhere;
+  margin: 0;
+  font-size: clamp(27px, 3.5vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+}
+
+.run-title > p:last-child {
+  margin: 9px 0 0;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.run-fields {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(130px, 0.75fr) minmax(100px, 0.55fr) auto;
+  gap: 8px;
+  align-items: end;
+  width: min(760px, 70%);
+}
+
+.compact-field {
+  gap: 4px;
+}
+
+.compact-field input,
+.compact-field select {
+  min-height: 40px;
+  padding-block: 8px;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.panel-heading .eyebrow {
+  margin-bottom: 4px;
+}
+
+.panel-heading h2 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: -0.03em;
+}
+
+.panel-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-description,
+.panel-hint {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.metric-card > span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 680;
+  letter-spacing: 0.04em;
+}
+
+.metric-card > strong {
+  display: block;
+  margin: 5px 0;
+  font-size: 28px;
+  letter-spacing: -0.04em;
+}
+
+.metric-card > strong small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.metric-card > small {
+  color: var(--text-soft);
+  font-size: 10px;
+}
+
+.progress-track i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green-deep), var(--green));
+}
+
+.flow-mainline {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.flow-branches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.flow-lane {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(4, 12, 9, 0.28);
+}
+
+.flow-lane > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.flow-lane > header span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.flow-lane > header strong {
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.flow-lane-stages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.lane-physical .flow-lane-stages {
+  grid-template-columns: 1fr;
+}
+
+.stage-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.stage-order {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.stage-card-body {
+  min-width: 0;
+}
+
+.stage-card-body strong,
+.stage-card-body small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stage-card-body strong {
+  color: var(--text);
+  font-size: 11px;
+}
+
+.stage-card-body small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.stage-record-count,
+.current-flag {
+  min-width: 20px;
+  padding: 2px 5px;
+  border-radius: 99px;
+  background: rgba(126, 226, 184, 0.1);
+  color: var(--green);
+  font-size: 8px;
+  font-weight: 750;
+  text-align: center;
+}
+
+.current-flag {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+}
+
+.stage-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+  gap: 20px;
+}
+
+.stage-fields {
+  display: grid;
+  gap: 12px;
+}
+
+.gate-row {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(4, 12, 9, 0.32);
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.gate-row.is-done {
+  color: var(--muted);
+}
+
+.gate-row.is-done > span:last-child {
+  text-decoration: line-through;
+}
+
+.gate-index {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.record-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.search-field input {
+  min-height: 40px;
+}
+
+.result-count {
+  align-self: center;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: right;
+}
+
+.record-card > header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.record-card > h3 {
+  margin: 12px 0 0;
+  font-size: 16px;
+}
+
+.record-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.record-meta {
+  justify-content: flex-start;
+}
+
+.priority {
+  color: var(--text-soft);
+}
+
+.priority-critical {
+  color: var(--red);
+}
+
+.priority-high {
+  color: var(--amber);
+}
+
+.record-content summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.record-content p {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  white-space: pre-wrap;
+}
+
+.tag-list > span {
+  padding: 3px 7px;
+  border-radius: 99px;
+  background: rgba(126, 226, 184, 0.06);
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.record-card > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 11px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.attachment-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.attachment-chip {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgba(4, 12, 9, 0.36);
+}
+
+.attachment-chip img,
+.attachment-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  object-fit: cover;
+  background: rgba(126, 226, 184, 0.06);
+}
+
+.attachment-name {
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 10px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment-chip small {
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.empty-state h3 {
+  margin: 10px 0 4px;
+  color: var(--text-soft);
+}
+
+.empty-state p {
+  max-width: 520px;
+  margin: 0 0 15px;
+}
+
+.modal {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  width: auto;
+  max-height: none;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  animation: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: rgba(0, 7, 5, 0.76);
+  backdrop-filter: blur(9px);
+}
+
+.modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(650px, 100%);
+  max-height: min(88vh, 900px);
+  overflow-y: auto;
+  padding: 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xl);
+  background: #0c1d17;
+  box-shadow: var(--shadow);
+  animation: modal-in 180ms ease both;
+}
+
+.modal-record {
+  width: min(760px, 100%);
+}
+
+.modal-menu {
+  width: min(470px, 100%);
+}
+
+.modal-card > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.modal-card > header h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.modal-card form {
+  display: grid;
+  gap: 14px;
+}
+
+.action-list {
+  display: grid;
+  gap: 7px;
+}
+
+.action-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(4, 12, 9, 0.3);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.action-row:hover {
+  border-color: rgba(126, 226, 184, 0.3);
+  background: rgba(126, 226, 184, 0.05);
+}
+
+.action-row > span {
+  color: var(--green);
+  font-size: 18px;
+  text-align: center;
+}
+
+.action-row strong,
+.action-row small {
+  display: block;
+}
+
+.action-row small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.action-row.danger {
+  color: #ffc5c5;
+}
+
+.action-row.danger > span {
+  color: var(--red);
+}
+
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.push-left {
+  margin-right: auto;
+}
+
+.upload-field input[type="file"] {
+  padding: 9px;
+}
+
+.toast-success {
+  border-color: rgba(126, 226, 184, 0.35);
+}
+
+.toast-error {
+  border-color: rgba(255, 142, 142, 0.35);
+  color: #ffc5c5;
+}
+
+@media (max-width: 1180px) {
+  :root {
+    --sidebar: 238px;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .content-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stage-focus {
+    position: static;
+  }
+
+  .flow-line {
+    grid-template-columns: repeat(4, minmax(105px, 1fr));
+  }
+
+  .record-toolbar {
+    grid-template-columns: minmax(180px, 1fr) repeat(2, minmax(120px, 0.45fr));
+  }
+
+  .run-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .run-fields {
+    width: 100%;
+  }
+
+  .flow-mainline {
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .lock-shell {
+    grid-template-columns: 1fr;
+    width: min(620px, calc(100% - 32px));
+    padding: 38px 0;
+  }
+
+  .privacy-points {
+    grid-template-columns: 1fr;
+  }
+
+  .privacy-point {
+    min-height: 0;
+  }
+
+  .app-shell {
+    display: block;
+    padding-top: 66px;
+  }
+
+  .topbar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    min-height: 66px;
+    padding: 0 14px;
+  }
+
+  .mobile-menu {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.035);
+  }
+
+  .topbar-title {
+    flex: 1;
+  }
+
+  .topbar .sync-state,
+  .topbar .btn-label {
+    display: none;
+  }
+
+  .sidebar {
+    width: min(300px, 86vw);
+    transform: translateX(-105%);
+    box-shadow: var(--shadow);
+    transition: transform 220ms ease;
+  }
+
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-scrim {
+    display: block;
+    position: fixed;
+    z-index: 25;
+    inset: 0;
+    background: rgba(0, 6, 4, 0.66);
+  }
+
+  .main {
+    padding: 20px 14px 40px;
+  }
+
+  .flow-line {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .record-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .record-toolbar > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .topbar .brand-lockup.compact small,
+  .topbar-context {
+    display: none;
+  }
+
+  .run-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stage-editor {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-mainline {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 590px) {
+  body {
+    font-size: 14px;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  .lock-title {
+    font-size: 44px;
+  }
+
+  .connect-card {
+    padding: 22px 18px;
+    border-radius: 22px;
+  }
+
+  .form-row,
+  .metric-grid,
+  .backup-grid,
+  .connection-details {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid,
+  .run-fields,
+  .flow-branches {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    gap: 8px;
+  }
+
+  .topbar-actions {
+    gap: 6px;
+  }
+
+  .topbar-actions .btn {
+    width: 42px;
+    min-width: 42px;
+    padding-inline: 0;
+  }
+
+  .page-head {
+    display: grid;
+  }
+
+  .page-head .panel-actions {
+    width: 100%;
+  }
+
+  .page-head .btn {
+    flex: 1;
+  }
+
+  .flow-line {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .flow-mainline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .flow-branch-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .branch-label {
+    min-height: 34px;
+  }
+
+  .branch-stages {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-card {
+    min-height: 84px;
+  }
+
+  .quick-create {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .record-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .record-toolbar > :first-child {
+    grid-column: auto;
+  }
+
+  .record-head,
+  .record-footer,
+  .panel-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .record-head .inline-actions {
+    justify-content: flex-end;
+  }
+
+  .modal-backdrop {
+    padding: 0;
+  }
+
+  .modal {
+    align-items: end;
+    padding: 0;
+  }
+
+  .modal-card {
+    width: 100%;
+    max-height: 92vh;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 24px 24px 0 0;
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+  }
+
+  .modal-actions {
+    position: sticky;
+    bottom: 0;
+    padding-top: 12px;
+    background: linear-gradient(transparent, #0c1d17 22%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div id="app">
+      <main class="boot-screen" aria-live="polite">
+        <div class="boot-mark" aria-hidden="true">FT</div>
+        <p>正在准备 FlowTrace…</p>
+      </main>
+    </div>
+    <noscript>FlowTrace 需要启用 JavaScript 才能连接你的私有数据仓库。</noscript>
+    <script>(function (global) {
+  "use strict";
+
+  const SCHEMA_VERSION = 1;
+  const MAX_ATTACHMENT_BYTES = 750 * 1024;
+  const ALLOWED_ATTACHMENT_EXTENSIONS = new Set([
+    "png",
+    "jpg",
+    "jpeg",
+    "webp",
+    "gif",
+    "pdf",
+    "txt",
+    "md",
+    "csv",
+    "rpt",
+  ]);
+  const ALLOWED_ATTACHMENT_MIMES = new Set([
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "image/gif",
+    "application/pdf",
+    "application/octet-stream",
+    "text/plain",
+    "text/markdown",
+    "text/csv",
+  ]);
+
+  const STAGE_TEMPLATE = Object.freeze([
+    {
+      slug: "init",
+      order: 1,
+      name: "Init / Import",
+      shortName: "Init",
+      phase: "foundation",
+      description: "导入设计、约束和工艺视图，建立可复现的起点。",
+      gates: ["输入文件与版本已确认", "时钟/约束可读", "基础检查无阻断项"],
+    },
+    {
+      slug: "floorplan",
+      order: 2,
+      name: "Floorplan",
+      shortName: "Floorplan",
+      phase: "foundation",
+      description: "完成 die/core、宏单元、IO、halo 与通道规划。",
+      gates: ["宏单元位置与朝向确认", "通道与 halo 合理", "初步拥塞可接受"],
+    },
+    {
+      slug: "power",
+      order: 3,
+      name: "Power Plan",
+      shortName: "Power",
+      phase: "foundation",
+      description: "建立电源环、条带、特殊网络连接并检查连通性。",
+      gates: ["PG 网络连通", "宏单元电源接入", "早期 PG DRC 已复核"],
+    },
+    {
+      slug: "placement",
+      order: 4,
+      name: "Placement",
+      shortName: "Place",
+      phase: "implementation",
+      description: "完成标准单元布局、优化并评估拥塞与时序。",
+      gates: ["布局合法", "拥塞热点可解释", "关键路径进入目标区间"],
+    },
+    {
+      slug: "prects",
+      order: 5,
+      name: "Pre-CTS",
+      shortName: "Pre-CTS",
+      phase: "implementation",
+      description: "在 CTS 前完成优化、检查和时序基线记录。",
+      gates: ["Pre-CTS 检查完成", "高扇出网络已处理", "基线报告已归档"],
+    },
+    {
+      slug: "cts",
+      order: 6,
+      name: "CTS / CCOpt",
+      shortName: "CTS",
+      phase: "implementation",
+      description: "综合并优化时钟树，控制 skew、latency 与 DRC。",
+      gates: ["时钟树已构建", "skew/latency 可接受", "时钟 DRC 已复核"],
+    },
+    {
+      slug: "postcts",
+      order: 7,
+      name: "Post-CTS",
+      shortName: "Post-CTS",
+      phase: "implementation",
+      description: "在 propagated clock 条件下完成时序与拥塞优化。",
+      gates: ["Post-CTS 时序已检查", "hold 修复策略明确", "布局仍合法"],
+    },
+    {
+      slug: "route",
+      order: 8,
+      name: "Route",
+      shortName: "Route",
+      phase: "implementation",
+      description: "完成全局/详细布线并处理拥塞、天线和信号完整性。",
+      gates: ["详细布线完成", "Open/Short 已复核", "路由拥塞可接受"],
+    },
+    {
+      slug: "postroute",
+      order: 9,
+      name: "Post-Route / Chip Finish",
+      shortName: "Post-Route",
+      phase: "closure",
+      description: "完成 post-route 优化、填充与 chip finish。",
+      gates: ["Post-route 优化完成", "Chip finish 完成", "主要 DRC 已收敛"],
+    },
+    {
+      slug: "ecopr",
+      order: 10,
+      name: "PNR ECO / Data Dump",
+      shortName: "ECO / Dump",
+      phase: "closure",
+      description: "执行物理 ECO，冻结并导出后续签核所需数据。",
+      gates: ["ECO 变更已记录", "网表/约束/版图一致", "签核数据已导出"],
+    },
+    {
+      slug: "pvprep",
+      order: 11,
+      name: "PV Data Prep / Fill GDS",
+      shortName: "PV Prep",
+      phase: "signoff",
+      description: "准备 dummy/metal fill 与签核 GDS，随后进入并行签核路径。",
+      gates: ["Fill 数据已生成", "签核 GDS 已准备", "RC/PV 输入版本一致"],
+    },
+    {
+      slug: "extract",
+      order: 12,
+      name: "StarRC / RC Extraction",
+      shortName: "RC Extract",
+      phase: "timing",
+      lane: "timing",
+      description: "从签核版图提取寄生参数，为 PrimeTime 提供 RC 数据。",
+      gates: ["提取角已确认", "SPEF/寄生数据生成", "提取日志无阻断项"],
+    },
+    {
+      slug: "pt",
+      order: 13,
+      name: "STA / PrimeTime",
+      shortName: "PrimeTime",
+      phase: "timing",
+      lane: "timing",
+      description: "使用签核 RC 执行 PrimeTime STA，驱动 ECO 闭环。",
+      gates: ["Setup/Hold 已签核", "约束与例外已审查", "ECO/waiver 已闭环"],
+    },
+    {
+      slug: "pv",
+      order: 14,
+      name: "Calibre PV Checks",
+      shortName: "Calibre PV",
+      phase: "physical",
+      lane: "physical",
+      description: "并行执行 Calibre DRC/LVS/ERC 等物理验证并闭环。",
+      gates: ["DRC 已闭环或 waiver", "LVS 一致", "最终 PV 结果已归档"],
+    },
+  ]);
+
+  const STATUS_META = Object.freeze({
+    "not-started": { label: "未开始", tone: "muted" },
+    "in-progress": { label: "进行中", tone: "active" },
+    blocked: { label: "阻塞", tone: "danger" },
+    review: { label: "待复核", tone: "warning" },
+    done: { label: "已完成", tone: "success" },
+  });
+
+  const RECORD_TYPES = Object.freeze({
+    progress: { label: "进展", icon: "↗" },
+    report: { label: "报告", icon: "▤" },
+    issue: { label: "问题", icon: "!" },
+    note: { label: "笔记", icon: "✎" },
+    knowledge: { label: "知识", icon: "◇" },
+    action: { label: "行动项", icon: "✓" },
+  });
+
+  function now() {
+    return new Date().toISOString();
+  }
+
+  function uid(prefix) {
+    const random =
+      global.crypto && typeof global.crypto.randomUUID === "function"
+        ? global.crypto.randomUUID()
+        : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+    return `${prefix}_${random}`;
+  }
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function createStageState(template) {
+    const timestamp = now();
+    return {
+      slug: template.slug,
+      status: "not-started",
+      nextStep: "",
+      note: "",
+      updatedAt: timestamp,
+      gates: template.gates.map((label, index) => ({
+        id: `${template.slug}-gate-${index + 1}`,
+        label,
+        done: false,
+      })),
+    };
+  }
+
+  function createRun(name = "我的第一个 Flow") {
+    const timestamp = now();
+    return {
+      id: uid("run"),
+      name: String(name).trim().slice(0, 80) || "未命名 Flow",
+      design: "",
+      owner: "",
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      archived: false,
+      currentStageSlug: "init",
+      stages: STAGE_TEMPLATE.map(createStageState),
+    };
+  }
+
+  function createWorkspace() {
+    const timestamp = now();
+    const run = createRun();
+    return {
+      schemaVersion: SCHEMA_VERSION,
+      workspaceId: uid("workspace"),
+      updatedAt: timestamp,
+      revision: 0,
+      activeRunId: run.id,
+      runs: [run],
+      records: [],
+      attachments: [],
+    };
+  }
+
+  function normalizeStage(input, template) {
+    const fallback = createStageState(template);
+    const gates = Array.isArray(input && input.gates)
+      ? input.gates
+          .filter((gate) => gate && typeof gate.label === "string")
+          .map((gate, index) => ({
+            id: String(gate.id || `${template.slug}-gate-${index + 1}`),
+            label: gate.label.slice(0, 180),
+            done: Boolean(gate.done),
+          }))
+      : fallback.gates;
+    const status = STATUS_META[input && input.status]
+      ? input.status
+      : "not-started";
+    return {
+      slug: template.slug,
+      status,
+      nextStep: String((input && input.nextStep) || "").slice(0, 1000),
+      note: String((input && input.note) || "").slice(0, 10000),
+      updatedAt: String((input && input.updatedAt) || now()),
+      gates: gates.length ? gates : fallback.gates,
+    };
+  }
+
+  function normalizeRun(input, index) {
+    const run = input && typeof input === "object" ? input : {};
+    const sourceStages = Array.isArray(run.stages) ? run.stages : [];
+    const bySlug = new Map(sourceStages.map((stage) => [stage && stage.slug, stage]));
+    const stageSlug = STAGE_TEMPLATE.some(
+      (stage) => stage.slug === run.currentStageSlug,
+    )
+      ? run.currentStageSlug
+      : "init";
+    return {
+      id: String(run.id || uid("run")),
+      name: String(run.name || `Flow ${index + 1}`).slice(0, 80),
+      design: String(run.design || "").slice(0, 120),
+      owner: String(run.owner || "").slice(0, 80),
+      createdAt: String(run.createdAt || now()),
+      updatedAt: String(run.updatedAt || now()),
+      archived: Boolean(run.archived),
+      currentStageSlug: stageSlug,
+      stages: STAGE_TEMPLATE.map((template) =>
+        normalizeStage(bySlug.get(template.slug), template),
+      ),
+    };
+  }
+
+  function normalizeRecord(record) {
+    if (!record || typeof record !== "object") return null;
+    if (!RECORD_TYPES[record.type]) return null;
+    if (!STAGE_TEMPLATE.some((stage) => stage.slug === record.stageSlug)) return null;
+    return {
+      id: String(record.id || uid("record")),
+      runId: String(record.runId || ""),
+      stageSlug: String(record.stageSlug),
+      type: record.type,
+      title: String(record.title || "未命名记录").slice(0, 120),
+      content: String(record.content || "").slice(0, 50000),
+      status: String(record.status || "open").slice(0, 40),
+      priority: ["low", "medium", "high", "critical"].includes(record.priority)
+        ? record.priority
+        : "medium",
+      tags: Array.isArray(record.tags)
+        ? record.tags.map(String).map((tag) => tag.trim()).filter(Boolean).slice(0, 20)
+        : [],
+      dueAt: record.dueAt ? String(record.dueAt) : null,
+      attachmentIds: Array.isArray(record.attachmentIds)
+        ? record.attachmentIds.map(String)
+        : [],
+      createdAt: String(record.createdAt || now()),
+      updatedAt: String(record.updatedAt || now()),
+    };
+  }
+
+  function normalizeAttachment(attachment) {
+    if (!attachment || typeof attachment !== "object") return null;
+    if (
+      typeof attachment.dataUrl !== "string" ||
+      !attachment.dataUrl.startsWith("data:")
+    ) {
+      return null;
+    }
+    const name = sanitizeFilename(attachment.name || "attachment");
+    const extension = name.toLowerCase().split(".").pop();
+    const size = Math.max(0, Number(attachment.size) || 0);
+    const dataMime = /^data:([^;,]*)(?:;base64)?,/i.exec(attachment.dataUrl);
+    const mime = String(
+      attachment.mime ||
+        (dataMime && dataMime[1]) ||
+        "application/octet-stream",
+    )
+      .toLowerCase()
+      .slice(0, 120);
+    if (
+      !ALLOWED_ATTACHMENT_EXTENSIONS.has(extension) ||
+      !ALLOWED_ATTACHMENT_MIMES.has(mime) ||
+      !dataMime ||
+      (dataMime[1] && !ALLOWED_ATTACHMENT_MIMES.has(dataMime[1].toLowerCase())) ||
+      size > MAX_ATTACHMENT_BYTES ||
+      attachment.dataUrl.length > MAX_ATTACHMENT_BYTES * 1.5 + 2048
+    ) {
+      return null;
+    }
+    return {
+      id: String(attachment.id || uid("attachment")),
+      recordId: attachment.recordId ? String(attachment.recordId) : null,
+      name,
+      mime,
+      size,
+      dataUrl: attachment.dataUrl,
+      createdAt: String(attachment.createdAt || now()),
+    };
+  }
+
+  function normalizeWorkspace(input) {
+    if (!input || typeof input !== "object") {
+      throw new Error("数据文件不是有效的 FlowTrace 工作区。");
+    }
+    const version = Number(input.schemaVersion || 1);
+    if (version > SCHEMA_VERSION) {
+      throw new Error(`数据版本 ${version} 高于当前页面支持的版本。`);
+    }
+    let runs = Array.isArray(input.runs)
+      ? input.runs.map(normalizeRun)
+      : [];
+    if (!runs.length) runs = [createRun()];
+    const runIds = new Set(runs.map((run) => run.id));
+    const records = (Array.isArray(input.records) ? input.records : [])
+      .map(normalizeRecord)
+      .filter((record) => record && runIds.has(record.runId));
+    const recordIds = new Set(records.map((record) => record.id));
+    const attachments = (
+      Array.isArray(input.attachments) ? input.attachments : []
+    )
+      .map(normalizeAttachment)
+      .filter(
+        (attachment) =>
+          attachment &&
+          (!attachment.recordId || recordIds.has(attachment.recordId)),
+      );
+    const activeRunId = runIds.has(input.activeRunId)
+      ? input.activeRunId
+      : runs.find((run) => !run.archived)?.id || runs[0].id;
+    return {
+      schemaVersion: SCHEMA_VERSION,
+      workspaceId: String(input.workspaceId || uid("workspace")),
+      updatedAt: String(input.updatedAt || now()),
+      revision: Math.max(0, Number(input.revision) || 0),
+      activeRunId,
+      runs,
+      records,
+      attachments,
+    };
+  }
+
+  function validateWorkspace(workspace) {
+    const errors = [];
+    if (!workspace || workspace.schemaVersion !== SCHEMA_VERSION) {
+      errors.push("schemaVersion 无效");
+    }
+    if (!Array.isArray(workspace && workspace.runs) || !workspace.runs.length) {
+      errors.push("至少需要一个 Flow");
+    }
+    for (const run of (workspace && workspace.runs) || []) {
+      const slugs = (run.stages || []).map((stage) => stage.slug);
+      if (slugs.length !== STAGE_TEMPLATE.length) {
+        errors.push(`${run.name}: 阶段数量不是 14`);
+      }
+      if (new Set(slugs).size !== STAGE_TEMPLATE.length) {
+        errors.push(`${run.name}: 阶段标识重复`);
+      }
+      for (const template of STAGE_TEMPLATE) {
+        if (!slugs.includes(template.slug)) {
+          errors.push(`${run.name}: 缺少 ${template.slug}`);
+        }
+      }
+    }
+    return errors;
+  }
+
+  function activeRun(workspace) {
+    return (
+      workspace.runs.find((run) => run.id === workspace.activeRunId) ||
+      workspace.runs[0]
+    );
+  }
+
+  function stageTemplate(slug) {
+    return STAGE_TEMPLATE.find((stage) => stage.slug === slug);
+  }
+
+  function stageState(run, slug) {
+    return run.stages.find((stage) => stage.slug === slug);
+  }
+
+  function runProgress(run) {
+    const complete = run.stages.filter((stage) => stage.status === "done").length;
+    return {
+      complete,
+      total: STAGE_TEMPLATE.length,
+      percent: Math.round((complete / STAGE_TEMPLATE.length) * 100),
+    };
+  }
+
+  function gateProgress(run) {
+    const gates = run.stages.flatMap((stage) => stage.gates || []);
+    const done = gates.filter((gate) => gate.done).length;
+    return { done, total: gates.length };
+  }
+
+  function touchWorkspace(workspace, run) {
+    const timestamp = now();
+    workspace.updatedAt = timestamp;
+    if (run) run.updatedAt = timestamp;
+    return workspace;
+  }
+
+  function prepareForSave(workspace) {
+    const copy = normalizeWorkspace(clone(workspace));
+    copy.revision += 1;
+    copy.updatedAt = now();
+    return copy;
+  }
+
+  function exportWorkspace(workspace) {
+    const output = normalizeWorkspace(clone(workspace));
+    return JSON.stringify(output, null, 2);
+  }
+
+  function sanitizeFilename(name) {
+    return String(name)
+      .split(/[\\/]/)
+      .pop()
+      .replace(/[^\p{L}\p{N}._()\- ]/gu, "_")
+      .replace(/\s+/g, " ")
+      .slice(0, 120) || "attachment";
+  }
+
+  global.FlowTraceModel = Object.freeze({
+    SCHEMA_VERSION,
+    STAGE_TEMPLATE,
+    STATUS_META,
+    RECORD_TYPES,
+    now,
+    uid,
+    clone,
+    createRun,
+    createWorkspace,
+    normalizeWorkspace,
+    validateWorkspace,
+    activeRun,
+    stageTemplate,
+    stageState,
+    runProgress,
+    gateProgress,
+    touchWorkspace,
+    prepareForSave,
+    exportWorkspace,
+    sanitizeFilename,
+  });
+})(typeof window !== "undefined" ? window : globalThis);
+
+
+(function (global) {
+  "use strict";
+
+  const SESSION_TOKEN_KEY = "flowtrace.github.token.session";
+  const TRUSTED_TOKEN_KEY = "flowtrace.github.token.trusted";
+  const PREFS_KEY = "flowtrace.github.preferences";
+  const API_VERSION = "2022-11-28";
+  const MAX_WORKSPACE_BYTES = 10 * 1024 * 1024;
+
+  class StoreError extends Error {
+    constructor(code, message, status = 0) {
+      super(message);
+      this.name = "StoreError";
+      this.code = code;
+      this.status = status;
+    }
+  }
+
+  function encodeUtf8Base64(value) {
+    const bytes = new TextEncoder().encode(value);
+    let binary = "";
+    const chunk = 0x8000;
+    for (let index = 0; index < bytes.length; index += chunk) {
+      binary += String.fromCharCode(...bytes.subarray(index, index + chunk));
+    }
+    return btoa(binary);
+  }
+
+  function decodeUtf8Base64(value) {
+    const binary = atob(String(value).replace(/\s/g, ""));
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    return new TextDecoder().decode(bytes);
+  }
+
+  function safeStorage(storage) {
+    try {
+      const marker = "__flowtrace_storage_test__";
+      storage.setItem(marker, marker);
+      storage.removeItem(marker);
+      return storage;
+    } catch {
+      return null;
+    }
+  }
+
+  function getStoredToken() {
+    const session = safeStorage(global.sessionStorage);
+    const local = safeStorage(global.localStorage);
+    return (
+      (session && session.getItem(SESSION_TOKEN_KEY)) ||
+      (local && local.getItem(TRUSTED_TOKEN_KEY)) ||
+      ""
+    );
+  }
+
+  function storeToken(token, remember) {
+    const session = safeStorage(global.sessionStorage);
+    const local = safeStorage(global.localStorage);
+    if (!session && !local) {
+      throw new StoreError(
+        "STORAGE",
+        "浏览器禁止本地存储。可继续当前页面使用，但刷新后需要重新连接。",
+      );
+    }
+    if (remember) {
+      if (!local) throw new StoreError("STORAGE", "无法在此设备记住访问状态。");
+      local.setItem(TRUSTED_TOKEN_KEY, token);
+      if (session) session.removeItem(SESSION_TOKEN_KEY);
+    } else {
+      if (session) session.setItem(SESSION_TOKEN_KEY, token);
+      if (local) local.removeItem(TRUSTED_TOKEN_KEY);
+    }
+  }
+
+  function clearToken() {
+    const session = safeStorage(global.sessionStorage);
+    const local = safeStorage(global.localStorage);
+    if (session) session.removeItem(SESSION_TOKEN_KEY);
+    if (local) local.removeItem(TRUSTED_TOKEN_KEY);
+  }
+
+  function loadPreferences() {
+    const local = safeStorage(global.localStorage);
+    if (!local) return {};
+    try {
+      return JSON.parse(local.getItem(PREFS_KEY) || "{}");
+    } catch {
+      return {};
+    }
+  }
+
+  function savePreferences(preferences) {
+    const local = safeStorage(global.localStorage);
+    if (!local) return;
+    const safe = {
+      owner: String(preferences.owner || "").slice(0, 80),
+      repo: String(preferences.repo || "").slice(0, 120),
+    };
+    local.setItem(PREFS_KEY, JSON.stringify(safe));
+  }
+
+  function classifyStatus(status) {
+    if (status === 401 || status === 403) return "AUTH";
+    if (status === 404) return "NOT_FOUND";
+    if (status === 409 || status === 422) return "CONFLICT";
+    if (status === 429 || status >= 500) return "NETWORK";
+    return "API";
+  }
+
+  class GitHubStore {
+    constructor({ owner, repo, token, path = "flowtrace-data.json" }) {
+      this.owner = String(owner || "").trim();
+      this.repo = String(repo || "").trim();
+      this.token = String(token || "").trim();
+      this.path = path;
+      if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/.test(this.owner)) {
+        throw new StoreError("CONFIG", "GitHub 用户名格式不正确。");
+      }
+      if (!/^[A-Za-z0-9._-]{1,100}$/.test(this.repo)) {
+        throw new StoreError("CONFIG", "私有仓库名格式不正确。");
+      }
+      if (!this.token) throw new StoreError("CONFIG", "请输入新的访问令牌。");
+    }
+
+    headers() {
+      return {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${this.token}`,
+        "X-GitHub-Api-Version": API_VERSION,
+      };
+    }
+
+    async request(url, options = {}) {
+      let response;
+      try {
+        response = await fetch(`https://api.github.com${url}`, {
+          ...options,
+          headers: { ...this.headers(), ...(options.headers || {}) },
+          cache: "no-store",
+        });
+      } catch {
+        throw new StoreError(
+          "NETWORK",
+          "无法连接 GitHub。请检查网络后重试，本地草稿没有丢失。",
+        );
+      }
+      if (!response.ok) {
+        const code = classifyStatus(response.status);
+        const messages = {
+          AUTH: "验证失败或令牌权限不足。请使用只授权私有数据仓库的新令牌重新连接。",
+          NOT_FOUND: "找不到指定资源。请核对账户、仓库名及令牌的仓库授权。",
+          CONFLICT: "云端已有更新，已阻止覆盖。请先导出本地草稿，再从云端同步。",
+          NETWORK: "GitHub 暂时不可用。请稍后重试，本地草稿没有丢失。",
+          API: `GitHub 请求失败（HTTP ${response.status}）。`,
+        };
+        throw new StoreError(code, messages[code], response.status);
+      }
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    async probe() {
+      return this.request(
+        `/repos/${encodeURIComponent(this.owner)}/${encodeURIComponent(this.repo)}`,
+      );
+    }
+
+    async load() {
+      const url = `/repos/${encodeURIComponent(this.owner)}/${encodeURIComponent(
+        this.repo,
+      )}/contents/${encodeURIComponent(this.path)}`;
+      let response;
+      try {
+        response = await fetch(`https://api.github.com${url}`, {
+          headers: this.headers(),
+          cache: "no-store",
+        });
+      } catch {
+        throw new StoreError(
+          "NETWORK",
+          "无法连接 GitHub。请检查网络后重试。",
+        );
+      }
+      if (response.status === 404) return { exists: false, workspace: null, sha: null };
+      if (!response.ok) {
+        const code = classifyStatus(response.status);
+        if (code === "AUTH") {
+          throw new StoreError(
+            "AUTH",
+            "验证失败或令牌权限不足。私有数据没有加载。",
+            response.status,
+          );
+        }
+        throw new StoreError(
+          code,
+          `读取私有数据失败（HTTP ${response.status}）。`,
+          response.status,
+        );
+      }
+      const payload = await response.json();
+      try {
+        let content = payload.content;
+        if ((!content || payload.encoding === "none") && payload.sha) {
+          const blob = await this.request(
+            `/repos/${encodeURIComponent(this.owner)}/${encodeURIComponent(
+              this.repo,
+            )}/git/blobs/${encodeURIComponent(payload.sha)}`,
+          );
+          content = blob && blob.content;
+        }
+        if (!content) throw new Error("missing content");
+        return {
+          exists: true,
+          workspace: JSON.parse(decodeUtf8Base64(content)),
+          sha: payload.sha,
+        };
+      } catch {
+        throw new StoreError(
+          "DATA",
+          "私有数据文件无法解析。请先在仓库中保留副本，不要覆盖它。",
+        );
+      }
+    }
+
+    async save(workspace, expectedSha) {
+      const url = `/repos/${encodeURIComponent(this.owner)}/${encodeURIComponent(
+        this.repo,
+      )}/contents/${encodeURIComponent(this.path)}`;
+      const serialized = JSON.stringify(workspace, null, 2);
+      if (new TextEncoder().encode(serialized).byteLength > MAX_WORKSPACE_BYTES) {
+        throw new StoreError(
+          "DATA",
+          "工作区已超过 10 MiB 安全上限。请导出备份并删除部分附件后再保存。",
+        );
+      }
+      const body = {
+        message: `FlowTrace: save workspace revision ${workspace.revision}`,
+        content: encodeUtf8Base64(serialized),
+      };
+      if (expectedSha) body.sha = expectedSha;
+      const result = await this.request(url, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      return {
+        sha: result && result.content ? result.content.sha : null,
+        commitSha: result && result.commit ? result.commit.sha : null,
+      };
+    }
+  }
+
+  global.FlowTraceGitHub = Object.freeze({
+    StoreError,
+    GitHubStore,
+    encodeUtf8Base64,
+    decodeUtf8Base64,
+    getStoredToken,
+    storeToken,
+    clearToken,
+    loadPreferences,
+    savePreferences,
+  });
+})(typeof window !== "undefined" ? window : globalThis);
+
+
+(function (global) {
+  "use strict";
+
+  const Model = global.FlowTraceModel;
+  const GitHub = global.FlowTraceGitHub;
+  const root = document.getElementById("app");
+  const MAX_ATTACHMENT_BYTES = 750 * 1024;
+  const MAX_IMPORT_BYTES = 10 * 1024 * 1024;
+  const DEFAULT_OWNER = "staaexc";
+  const DEFAULT_REPO = "flowtrace-private-data";
+
+  if (!root || !Model || !GitHub) {
+    if (root) {
+      root.innerHTML =
+        '<main class="lock-shell"><section class="connect-card"><h1>FlowTrace 无法启动</h1><p>页面文件不完整，请重新上传构建后的 index.html。</p></section></main>';
+    }
+    return;
+  }
+
+  const preferences = GitHub.loadPreferences();
+  const state = {
+    view: "locked",
+    owner: preferences.owner || DEFAULT_OWNER,
+    repo: preferences.repo || DEFAULT_REPO,
+    hasStoredToken: Boolean(GitHub.getStoredToken()),
+    remember: hasTrustedToken(),
+    store: null,
+    workspace: null,
+    sha: null,
+    dirty: false,
+    conflict: false,
+    busy: "",
+    error: "",
+    selectedStageSlug: "init",
+    query: "",
+    recordType: "all",
+    recordScope: "stage",
+    showArchived: false,
+    sidebarOpen: false,
+    lastSyncAt: "",
+    modal: null,
+    toast: null,
+    toastTimer: null,
+  };
+
+  function hasTrustedToken() {
+    try {
+      return Boolean(
+        global.localStorage.getItem("flowtrace.github.token.trusted"),
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function multiline(value) {
+    return escapeHtml(value).replace(/\r?\n/g, "<br>");
+  }
+
+  function formatDate(value, withTime = true) {
+    if (!value) return "—";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    return new Intl.DateTimeFormat("zh-CN", {
+      month: "2-digit",
+      day: "2-digit",
+      ...(withTime
+        ? { hour: "2-digit", minute: "2-digit", hour12: false }
+        : { year: "numeric" }),
+    }).format(date);
+  }
+
+  function activeRun() {
+    return state.workspace ? Model.activeRun(state.workspace) : null;
+  }
+
+  function currentStage(run) {
+    if (!run) return null;
+    return (
+      Model.stageTemplate(state.selectedStageSlug) ||
+      Model.stageTemplate(run.currentStageSlug) ||
+      Model.STAGE_TEMPLATE[0]
+    );
+  }
+
+  function statusMeta(status) {
+    return Model.STATUS_META[status] || Model.STATUS_META["not-started"];
+  }
+
+  function statusPill(status) {
+    const meta = statusMeta(status);
+    return `<span class="status-pill status-${escapeHtml(
+      meta.tone,
+    )}">${escapeHtml(meta.label)}</span>`;
+  }
+
+  function priorityLabel(priority) {
+    return (
+      {
+        low: "低",
+        medium: "中",
+        high: "高",
+        critical: "紧急",
+      }[priority] || "中"
+    );
+  }
+
+  function recordStatusLabel(status) {
+    return (
+      {
+        open: "待处理",
+        "in-progress": "进行中",
+        blocked: "阻塞",
+        review: "待复核",
+        done: "已完成",
+        closed: "已关闭",
+      }[status] || status
+    );
+  }
+
+  function errorMessage(error) {
+    if (error && error.message) return error.message;
+    return "操作没有完成，请稍后重试。";
+  }
+
+  function markDirty(run, stage) {
+    if (!state.workspace) return;
+    if (stage) stage.updatedAt = Model.now();
+    Model.touchWorkspace(state.workspace, run);
+    state.dirty = true;
+    state.conflict = false;
+  }
+
+  function showToast(message, tone = "success") {
+    state.toast = { message, tone };
+    renderToast();
+    if (state.toastTimer) global.clearTimeout(state.toastTimer);
+    state.toastTimer = global.setTimeout(() => {
+      state.toast = null;
+      renderToast();
+    }, 4200);
+  }
+
+  function renderToast() {
+    let host = document.getElementById("toast-region");
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "toast-region";
+      host.className = "toast-region";
+      host.setAttribute("aria-live", "polite");
+      document.body.appendChild(host);
+    }
+    host.innerHTML = state.toast
+      ? `<div class="toast toast-${escapeHtml(state.toast.tone)}">${escapeHtml(
+          state.toast.message,
+        )}</div>`
+      : "";
+  }
+
+  function renderLock() {
+    document.title = "FlowTrace · 私有工作台";
+    document.body.className = "is-locked";
+    root.innerHTML = `
+      <main class="lock-shell" id="main-content">
+        <section class="connect-card" aria-labelledby="connect-title">
+          <div class="brand-lockup">
+            <span class="brand-mark" aria-hidden="true">FT</span>
+            <div>
+              <p class="eyebrow">INNOVUS FLOW WORKSPACE</p>
+              <h1 id="connect-title">打开你的私有 FlowTrace</h1>
+            </div>
+          </div>
+          <p class="connect-lede">
+            页面本身不保存项目内容。验证成功后，才会从你指定的 GitHub 私有仓库读取数据。
+          </p>
+          ${
+            state.error
+              ? `<div class="notice notice-danger" role="alert">${escapeHtml(
+                  state.error,
+                )}</div>`
+              : ""
+          }
+          <form data-form="connect" class="connect-form" autocomplete="off">
+            <label class="field">
+              <span>GitHub 用户名</span>
+              <input name="owner" value="${escapeHtml(
+                state.owner,
+              )}" required maxlength="39" spellcheck="false" />
+            </label>
+            <label class="field">
+              <span>私有数据仓库</span>
+              <input name="repo" value="${escapeHtml(
+                state.repo,
+              )}" required maxlength="100" spellcheck="false" />
+            </label>
+            <label class="field">
+              <span>Fine-grained access token</span>
+              <input
+                name="token"
+                type="password"
+                inputmode="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="${
+                  state.hasStoredToken
+                    ? "本设备已有令牌，留空即可使用"
+                    : "github_pat_…"
+                }"
+              />
+              <small>只授权上面的私有仓库，并仅开启 Contents: Read and write。</small>
+            </label>
+            <label class="check-row">
+              <input name="remember" type="checkbox" ${
+                state.remember ? "checked" : ""
+              } />
+              <span>仅在自己的受信任设备记住 <small>（共享电脑不要勾选）</small></span>
+            </label>
+            <button class="btn btn-primary btn-wide" type="submit" ${
+              state.busy ? "disabled" : ""
+            }>
+              ${state.busy ? "正在验证并读取…" : "连接并读取私有数据"}
+            </button>
+          </form>
+          <div class="security-note">
+            <strong>令牌只留在当前浏览器。</strong>
+            不会写入项目数据、导出文件或公开网页。勾选“记住”会保留在本站点存储中；不要在聊天、截图或仓库里粘贴令牌。
+          </div>
+          <details class="connect-help">
+            <summary>为什么页面代码公开，数据仍然私密？</summary>
+            <p>GitHub Pages 只托管通用界面；Flow 名称、记录和附件均存放在你的私有仓库。没有有效令牌时，本页不会渲染任何项目数据。</p>
+          </details>
+        </section>
+      </main>
+    `;
+    renderToast();
+  }
+
+  function renderSidebar(run) {
+    const runs = state.workspace.runs.filter(
+      (item) => state.showArchived || !item.archived || item.id === run.id,
+    );
+    return `
+      <aside class="sidebar ${state.sidebarOpen ? "is-open" : ""}" aria-label="Flow 导航">
+        <div class="sidebar-heading">
+          <div>
+            <p class="eyebrow">FLOW LIBRARY</p>
+            <h2>项目流程</h2>
+          </div>
+          <button class="btn btn-icon" type="button" data-action="new-run" title="新建 Flow" aria-label="新建 Flow">＋</button>
+        </div>
+        <nav class="flow-list" aria-label="Flow 列表">
+          ${runs
+            .map((item) => {
+              const progress = Model.runProgress(item);
+              return `
+                <button
+                  type="button"
+                  class="flow-row ${item.id === run.id ? "is-active" : ""}"
+                  data-action="select-run"
+                  data-run-id="${escapeHtml(item.id)}"
+                  aria-current="${item.id === run.id ? "page" : "false"}"
+                >
+                  <span class="flow-row-main">
+                    <strong>${escapeHtml(item.name)}</strong>
+                    <small>${escapeHtml(
+                      item.design || "未填写设计名",
+                    )}${item.archived ? " · 已归档" : ""}</small>
+                  </span>
+                  <span class="flow-row-progress">${progress.percent}%</span>
+                </button>
+              `;
+            })
+            .join("")}
+        </nav>
+        <label class="check-row sidebar-toggle">
+          <input type="checkbox" data-action="show-archived" ${
+            state.showArchived ? "checked" : ""
+          } />
+          <span>显示已归档 Flow</span>
+        </label>
+        <div class="sidebar-foot">
+          <p><span class="sync-dot ${
+            state.dirty ? "is-dirty" : "is-synced"
+          }"></span>${state.dirty ? "本地有未保存修改" : "本地与云端一致"}</p>
+          <small>数据仓库：${escapeHtml(state.owner)}/${escapeHtml(
+            state.repo,
+          )}</small>
+        </div>
+      </aside>
+    `;
+  }
+
+  function renderTopbar(run) {
+    const syncLabel = state.conflict
+      ? "检测到云端冲突"
+      : state.dirty
+        ? "本地草稿未保存"
+        : state.lastSyncAt
+          ? `已同步 ${formatDate(state.lastSyncAt)}`
+          : "已读取云端";
+    return `
+      <header class="topbar">
+        <button class="mobile-menu" type="button" data-action="toggle-sidebar" aria-label="${
+          state.sidebarOpen ? "关闭 Flow 导航" : "打开 Flow 导航"
+        }" aria-expanded="${state.sidebarOpen ? "true" : "false"}">☰</button>
+        <div class="brand-lockup compact">
+          <span class="brand-mark" aria-hidden="true">FT</span>
+          <div>
+            <strong>FlowTrace</strong>
+            <small>Private GitHub workspace</small>
+          </div>
+        </div>
+        <div class="topbar-context">
+          <span class="sync-dot ${
+            state.conflict ? "is-conflict" : state.dirty ? "is-dirty" : "is-synced"
+          }"></span>
+          <span>${escapeHtml(syncLabel)}</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn" type="button" data-action="sync" aria-label="从云端同步" ${
+            state.busy ? "disabled" : ""
+          }><span aria-hidden="true">↻</span><span class="btn-label">同步</span></button>
+          <button class="btn btn-primary" type="button" data-action="save" aria-label="保存到云端" ${
+            state.busy || !state.dirty ? "disabled" : ""
+          }><span aria-hidden="true">⇧</span><span class="btn-label">${
+            state.busy === "save" ? "保存中…" : "保存到云端"
+          }</span></button>
+          <button class="btn btn-icon" type="button" data-action="open-menu" aria-label="打开更多操作" title="更多操作">•••</button>
+        </div>
+      </header>
+    `;
+  }
+
+  function renderMetrics(run) {
+    const progress = Model.runProgress(run);
+    const gates = Model.gateProgress(run);
+    const records = state.workspace.records.filter(
+      (record) => record.runId === run.id,
+    );
+    const openIssues = records.filter(
+      (record) =>
+        record.type === "issue" &&
+        !["done", "closed"].includes(record.status),
+    ).length;
+    const openActions = records.filter(
+      (record) =>
+        record.type === "action" &&
+        !["done", "closed"].includes(record.status),
+    ).length;
+    return `
+      <section class="metric-grid" aria-label="Flow 概览">
+        <article class="metric-card">
+          <span>阶段完成</span>
+          <strong>${progress.complete}<small> / ${progress.total}</small></strong>
+          <progress class="progress-track" max="100" value="${progress.percent}" aria-label="阶段完成 ${progress.percent}%"></progress>
+        </article>
+        <article class="metric-card">
+          <span>Gate 完成</span>
+          <strong>${gates.done}<small> / ${gates.total}</small></strong>
+          <progress class="progress-track" max="100" value="${
+            gates.total ? Math.round((gates.done / gates.total) * 100) : 0
+          }" aria-label="Gate 完成 ${
+            gates.total ? Math.round((gates.done / gates.total) * 100) : 0
+          }%"></progress>
+        </article>
+        <article class="metric-card">
+          <span>未闭环问题</span>
+          <strong>${openIssues}</strong>
+          <small>${openIssues ? "需要继续跟进" : "当前无待处理问题"}</small>
+        </article>
+        <article class="metric-card">
+          <span>行动项</span>
+          <strong>${openActions}</strong>
+          <small>共 ${records.length} 条工作记录</small>
+        </article>
+      </section>
+    `;
+  }
+
+  function stageRecordCount(runId, slug) {
+    return state.workspace.records.filter(
+      (record) => record.runId === runId && record.stageSlug === slug,
+    ).length;
+  }
+
+  function renderStageCard(template, run) {
+    const stage = Model.stageState(run, template.slug);
+    const gates = stage.gates || [];
+    const gateDone = gates.filter((gate) => gate.done).length;
+    const isSelected = template.slug === state.selectedStageSlug;
+    const isCurrent = template.slug === run.currentStageSlug;
+    return `
+      <button
+        class="stage-card status-${escapeHtml(statusMeta(stage.status).tone)} ${
+          isSelected ? "is-selected" : ""
+        } ${isCurrent ? "is-current" : ""}"
+        type="button"
+        data-action="select-stage"
+        data-stage="${escapeHtml(template.slug)}"
+        aria-pressed="${isSelected}"
+      >
+        <span class="stage-order">${String(template.order).padStart(2, "0")}</span>
+        <span class="stage-card-body">
+          <strong>${escapeHtml(template.shortName)}</strong>
+          <small>${escapeHtml(statusMeta(stage.status).label)} · Gate ${gateDone}/${
+            gates.length
+          }</small>
+        </span>
+        ${
+          stageRecordCount(run.id, template.slug)
+            ? `<span class="stage-record-count">${stageRecordCount(
+                run.id,
+                template.slug,
+              )}</span>`
+            : ""
+        }
+        ${isCurrent ? '<span class="current-flag">当前</span>' : ""}
+      </button>
+    `;
+  }
+
+  function renderFlowMap(run) {
+    const mainline = Model.STAGE_TEMPLATE.filter((stage) => stage.order <= 11);
+    const timing = Model.STAGE_TEMPLATE.filter(
+      (stage) => stage.lane === "timing",
+    );
+    const physical = Model.STAGE_TEMPLATE.filter(
+      (stage) => stage.lane === "physical",
+    );
+    return `
+      <section class="panel flow-panel" aria-labelledby="flow-map-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">COMPANY FLOW · 14 STAGES</p>
+            <h2 id="flow-map-title">流程地图</h2>
+          </div>
+          <span class="panel-hint">选择阶段查看细节</span>
+        </div>
+        <div class="flow-map">
+          <div class="flow-mainline">
+            ${mainline.map((stage) => renderStageCard(stage, run)).join("")}
+          </div>
+          <div class="branch-label"><span>从签核数据准备开始并行</span></div>
+          <div class="flow-branches">
+            <section class="flow-lane lane-timing" aria-label="RC 与时序签核">
+              <header><span>RC / TIMING</span><strong>StarRC → PrimeTime</strong></header>
+              <div class="flow-lane-stages">
+                ${timing.map((stage) => renderStageCard(stage, run)).join("")}
+              </div>
+            </section>
+            <section class="flow-lane lane-physical" aria-label="物理验证签核">
+              <header><span>PHYSICAL VERIFICATION</span><strong>Calibre PV</strong></header>
+              <div class="flow-lane-stages">
+                ${physical.map((stage) => renderStageCard(stage, run)).join("")}
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderGate(gate, index, stage) {
+    return `
+      <label class="gate-row ${gate.done ? "is-done" : ""}">
+        <input
+          type="checkbox"
+          data-action="gate-toggle"
+          data-stage="${escapeHtml(stage.slug)}"
+          data-gate-id="${escapeHtml(gate.id)}"
+          ${gate.done ? "checked" : ""}
+        />
+        <span class="gate-index">${String(index + 1).padStart(2, "0")}</span>
+        <span>${escapeHtml(gate.label)}</span>
+      </label>
+    `;
+  }
+
+  function renderStagePanel(run) {
+    const template = currentStage(run);
+    const stage = Model.stageState(run, template.slug);
+    const isCurrent = run.currentStageSlug === template.slug;
+    return `
+      <section class="panel stage-panel" aria-labelledby="stage-detail-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">STAGE ${String(template.order).padStart(2, "0")}</p>
+            <h2 id="stage-detail-title">${escapeHtml(template.name)}</h2>
+            <p class="panel-description">${escapeHtml(template.description)}</p>
+          </div>
+          <div class="panel-heading-actions">
+            ${statusPill(stage.status)}
+            <button class="btn ${isCurrent ? "" : "btn-secondary"}" type="button" data-action="mark-current" ${
+              isCurrent ? "disabled" : ""
+            }>${isCurrent ? "当前阶段" : "设为当前阶段"}</button>
+          </div>
+        </div>
+        <div class="stage-editor">
+          <div class="stage-fields">
+            <label class="field">
+              <span>阶段状态</span>
+              <select data-action="stage-status" data-stage="${escapeHtml(
+                stage.slug,
+              )}">
+                ${Object.entries(Model.STATUS_META)
+                  .map(
+                    ([value, meta]) =>
+                      `<option value="${escapeHtml(value)}" ${
+                        value === stage.status ? "selected" : ""
+                      }>${escapeHtml(meta.label)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </label>
+            <label class="field">
+              <span>下一步</span>
+              <textarea
+                rows="3"
+                maxlength="1000"
+                data-action="stage-next"
+                data-stage="${escapeHtml(stage.slug)}"
+                placeholder="下一条可执行动作、负责人或等待条件"
+              >${escapeHtml(stage.nextStep)}</textarea>
+            </label>
+            <label class="field">
+              <span>阶段笔记</span>
+              <textarea
+                rows="5"
+                maxlength="10000"
+                data-action="stage-note"
+                data-stage="${escapeHtml(stage.slug)}"
+                placeholder="记录上下文、命令、判断和复盘结论"
+              >${escapeHtml(stage.note)}</textarea>
+            </label>
+          </div>
+          <div class="gate-list">
+            <div class="section-label">
+              <span>完成条件</span>
+              <small>${stage.gates.filter((gate) => gate.done).length}/${
+                stage.gates.length
+              }</small>
+            </div>
+            ${stage.gates
+              .map((gate, index) => renderGate(gate, index, stage))
+              .join("")}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function filteredRecords(run) {
+    const query = state.query.trim().toLocaleLowerCase("zh-CN");
+    return state.workspace.records
+      .filter((record) => record.runId === run.id)
+      .filter(
+        (record) =>
+          state.recordScope === "all" ||
+          record.stageSlug === state.selectedStageSlug,
+      )
+      .filter(
+        (record) =>
+          state.recordType === "all" || record.type === state.recordType,
+      )
+      .filter((record) => {
+        if (!query) return true;
+        const template = Model.stageTemplate(record.stageSlug);
+        const haystack = [
+          record.title,
+          record.content,
+          record.status,
+          record.priority,
+          ...(record.tags || []),
+          template ? template.name : "",
+        ]
+          .join("\n")
+          .toLocaleLowerCase("zh-CN");
+        return haystack.includes(query);
+      })
+      .sort(
+        (left, right) =>
+          new Date(right.updatedAt).getTime() -
+          new Date(left.updatedAt).getTime(),
+      );
+  }
+
+  function attachmentsForRecord(record) {
+    const ids = new Set(record.attachmentIds || []);
+    return state.workspace.attachments.filter(
+      (attachment) =>
+        ids.has(attachment.id) || attachment.recordId === record.id,
+    );
+  }
+
+  function renderAttachment(attachment, editable = false) {
+    const isImage = /^data:image\/(?:png|jpeg|gif|webp);base64,/i.test(
+      attachment.dataUrl,
+    );
+    return `
+      <div class="attachment-chip">
+        ${
+          isImage
+            ? `<img src="${escapeHtml(
+                attachment.dataUrl,
+              )}" alt="" loading="lazy" />`
+            : '<span class="attachment-icon" aria-hidden="true">▣</span>'
+        }
+        <button
+          type="button"
+          class="attachment-name"
+          data-action="download-attachment"
+          data-attachment-id="${escapeHtml(attachment.id)}"
+          title="下载 ${escapeHtml(attachment.name)}"
+        >${escapeHtml(attachment.name)}</button>
+        <small>${Math.max(1, Math.round(attachment.size / 1024))} KiB</small>
+        ${
+          editable
+            ? `<button class="btn btn-icon btn-danger" type="button" data-action="delete-attachment" data-attachment-id="${escapeHtml(
+                attachment.id,
+              )}" aria-label="删除附件">×</button>`
+            : ""
+        }
+      </div>
+    `;
+  }
+
+  function renderRecordCard(record) {
+    const meta = Model.RECORD_TYPES[record.type];
+    const template = Model.stageTemplate(record.stageSlug);
+    const attachments = attachmentsForRecord(record);
+    return `
+      <article class="record-card" data-record-id="${escapeHtml(record.id)}">
+        <header>
+          <div class="record-kind kind-${escapeHtml(record.type)}">
+            <span aria-hidden="true">${escapeHtml(meta.icon)}</span>
+            ${escapeHtml(meta.label)}
+          </div>
+          <div class="record-meta">
+            <span>${escapeHtml(template ? template.shortName : record.stageSlug)}</span>
+            <span>${escapeHtml(recordStatusLabel(record.status))}</span>
+            <span class="priority priority-${escapeHtml(
+              record.priority,
+            )}">${priorityLabel(record.priority)}优先级</span>
+          </div>
+          <button class="btn btn-icon" type="button" data-action="edit-record" data-record-id="${escapeHtml(
+            record.id,
+          )}" aria-label="编辑记录" title="编辑记录">✎</button>
+        </header>
+        <h3>${escapeHtml(record.title)}</h3>
+        ${
+          record.content
+            ? `<details class="record-content" ${
+                record.content.length < 260 ? "open" : ""
+              }>
+                <summary>${record.content.length < 260 ? "内容" : "展开完整内容"}</summary>
+                <p>${multiline(record.content)}</p>
+              </details>`
+            : ""
+        }
+        ${
+          record.tags && record.tags.length
+            ? `<div class="tag-list">${record.tags
+                .map((tag) => `<span>#${escapeHtml(tag)}</span>`)
+                .join("")}</div>`
+            : ""
+        }
+        ${
+          attachments.length
+            ? `<div class="attachment-list">${attachments
+                .map((attachment) => renderAttachment(attachment))
+                .join("")}</div>`
+            : ""
+        }
+        <footer>
+          <span>更新 ${formatDate(record.updatedAt)}</span>
+          ${
+            record.dueAt
+              ? `<span>截止 ${formatDate(record.dueAt, false)}</span>`
+              : ""
+          }
+        </footer>
+      </article>
+    `;
+  }
+
+  function renderRecordList() {
+    if (!state.workspace) return;
+    const run = activeRun();
+    const records = filteredRecords(run);
+    const host = document.getElementById("record-list");
+    const count = document.getElementById("record-result-count");
+    if (count) count.textContent = `${records.length} 条`;
+    if (!host) return;
+    host.innerHTML = records.length
+      ? records.map(renderRecordCard).join("")
+      : `
+        <div class="empty-state">
+          <span aria-hidden="true">◇</span>
+          <h3>这里还没有匹配的记录</h3>
+          <p>把报告、问题、处理步骤和知识沉淀在对应阶段，后续复盘会更轻松。</p>
+          <button class="btn btn-primary" type="button" data-action="new-record" data-record-type="progress">添加第一条记录</button>
+        </div>
+      `;
+  }
+
+  function renderRecordsPanel(run) {
+    const records = filteredRecords(run);
+    return `
+      <section class="panel records-panel" aria-labelledby="records-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">EVIDENCE & LEARNING</p>
+            <h2 id="records-title">工作记录</h2>
+          </div>
+          <div class="record-quick-actions">
+            ${Object.entries(Model.RECORD_TYPES)
+              .map(
+                ([type, meta]) => `
+                  <button class="btn btn-small" type="button" data-action="new-record" data-record-type="${escapeHtml(
+                    type,
+                  )}">
+                    <span aria-hidden="true">${escapeHtml(meta.icon)}</span>
+                    ${escapeHtml(meta.label)}
+                  </button>
+                `,
+              )
+              .join("")}
+          </div>
+        </div>
+        <div class="record-toolbar">
+          <label class="search-field">
+            <span class="sr-only">搜索记录</span>
+            <input
+              type="search"
+              value="${escapeHtml(state.query)}"
+              data-action="search-records"
+              placeholder="搜索标题、内容、标签或阶段…"
+            />
+          </label>
+          <label class="field compact-field">
+            <span class="sr-only">记录范围</span>
+            <select data-action="record-scope">
+              <option value="stage" ${
+                state.recordScope === "stage" ? "selected" : ""
+              }>当前阶段</option>
+              <option value="all" ${
+                state.recordScope === "all" ? "selected" : ""
+              }>全部阶段</option>
+            </select>
+          </label>
+          <label class="field compact-field">
+            <span class="sr-only">记录类型</span>
+            <select data-action="record-type-filter">
+              <option value="all">全部类型</option>
+              ${Object.entries(Model.RECORD_TYPES)
+                .map(
+                  ([value, meta]) =>
+                    `<option value="${escapeHtml(value)}" ${
+                      value === state.recordType ? "selected" : ""
+                    }>${escapeHtml(meta.label)}</option>`,
+                )
+                .join("")}
+            </select>
+          </label>
+          <span id="record-result-count" class="result-count">${records.length} 条</span>
+        </div>
+        <div id="record-list" class="record-list">
+          ${
+            records.length
+              ? records.map(renderRecordCard).join("")
+              : `
+                <div class="empty-state">
+                  <span aria-hidden="true">◇</span>
+                  <h3>这里还没有匹配的记录</h3>
+                  <p>把报告、问题、处理步骤和知识沉淀在对应阶段，后续复盘会更轻松。</p>
+                  <button class="btn btn-primary" type="button" data-action="new-record" data-record-type="progress">添加第一条记录</button>
+                </div>
+              `
+          }
+        </div>
+      </section>
+    `;
+  }
+
+  function renderRunHeader(run) {
+    const stage = Model.stageTemplate(run.currentStageSlug);
+    return `
+      <section class="run-header">
+        <div class="run-title">
+          <p class="eyebrow">${run.archived ? "ARCHIVED FLOW" : "ACTIVE FLOW"}</p>
+          <h1>${escapeHtml(run.name)}</h1>
+          <p>当前阶段：${escapeHtml(stage ? stage.name : run.currentStageSlug)}</p>
+        </div>
+        <div class="run-fields">
+          <label class="field compact-field">
+            <span>Flow 名称</span>
+            <input data-action="run-field" data-field="name" maxlength="80" value="${escapeHtml(
+              run.name,
+            )}" />
+          </label>
+          <label class="field compact-field">
+            <span>设计 / Block</span>
+            <input data-action="run-field" data-field="design" maxlength="120" value="${escapeHtml(
+              run.design,
+            )}" placeholder="例如 chip_top" />
+          </label>
+          <label class="field compact-field">
+            <span>负责人</span>
+            <input data-action="run-field" data-field="owner" maxlength="80" value="${escapeHtml(
+              run.owner,
+            )}" placeholder="可选" />
+          </label>
+          <button class="btn" type="button" data-action="${
+            run.archived ? "restore-run" : "archive-run"
+          }">${run.archived ? "恢复 Flow" : "归档 Flow"}</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderMenuModal() {
+    return `
+      <div class="modal" role="presentation">
+        <button class="modal-backdrop" type="button" data-action="close-modal" aria-label="关闭"></button>
+        <section class="modal-card modal-menu" role="dialog" aria-modal="true" aria-labelledby="more-title">
+          <header>
+            <div><p class="eyebrow">WORKSPACE</p><h2 id="more-title">更多操作</h2></div>
+            <button class="btn btn-icon" type="button" data-action="close-modal" aria-label="关闭">×</button>
+          </header>
+          <div class="action-list">
+            <button class="action-row" type="button" data-action="export">
+              <span>⇩</span><div><strong>导出 JSON 备份</strong><small>不包含访问令牌，可离线保管</small></div>
+            </button>
+            <button class="action-row" type="button" data-action="import">
+              <span>⇧</span><div><strong>导入 JSON 草稿</strong><small>只改本地，点击保存后才写入云端</small></div>
+            </button>
+            <button class="action-row" type="button" data-action="lock">
+              <span>⌁</span><div><strong>锁定页面</strong><small>隐藏当前数据，但保留本设备令牌</small></div>
+            </button>
+            <button class="action-row danger" type="button" data-action="forget">
+              <span>×</span><div><strong>忘记本设备</strong><small>清除浏览器里的令牌并立即锁定</small></div>
+            </button>
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
+  function renderNewRunModal() {
+    return `
+      <div class="modal" role="presentation">
+        <button class="modal-backdrop" type="button" data-action="close-modal" aria-label="关闭"></button>
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="new-run-title">
+          <header>
+            <div><p class="eyebrow">NEW FLOW</p><h2 id="new-run-title">新建项目流程</h2></div>
+            <button class="btn btn-icon" type="button" data-action="close-modal" aria-label="关闭">×</button>
+          </header>
+          <form data-form="new-run">
+            <label class="field">
+              <span>Flow 名称</span>
+              <input name="name" required maxlength="80" autofocus placeholder="例如：chip_top / R1 signoff" />
+            </label>
+            <label class="field">
+              <span>设计 / Block</span>
+              <input name="design" maxlength="120" placeholder="例如 chip_top" />
+            </label>
+            <label class="field">
+              <span>负责人</span>
+              <input name="owner" maxlength="80" />
+            </label>
+            <footer class="modal-actions">
+              <button class="btn" type="button" data-action="close-modal">取消</button>
+              <button class="btn btn-primary" type="submit">创建 14 阶段 Flow</button>
+            </footer>
+          </form>
+        </section>
+      </div>
+    `;
+  }
+
+  function renderRecordModal(modal) {
+    const run = activeRun();
+    const existing = modal.recordId
+      ? state.workspace.records.find((record) => record.id === modal.recordId)
+      : null;
+    const type = existing ? existing.type : modal.recordType || "progress";
+    const stageSlug = existing
+      ? existing.stageSlug
+      : modal.stageSlug || state.selectedStageSlug;
+    const attachments = existing ? attachmentsForRecord(existing) : [];
+    return `
+      <div class="modal" role="presentation">
+        <button class="modal-backdrop" type="button" data-action="close-modal" aria-label="关闭"></button>
+        <section class="modal-card modal-record" role="dialog" aria-modal="true" aria-labelledby="record-form-title">
+          <header>
+            <div>
+              <p class="eyebrow">${existing ? "EDIT RECORD" : "NEW RECORD"}</p>
+              <h2 id="record-form-title">${existing ? "编辑工作记录" : "添加工作记录"}</h2>
+            </div>
+            <button class="btn btn-icon" type="button" data-action="close-modal" aria-label="关闭">×</button>
+          </header>
+          <form data-form="record" data-record-id="${escapeHtml(
+            existing ? existing.id : "",
+          )}">
+            <div class="form-grid">
+              <label class="field">
+                <span>类型</span>
+                <select name="type">
+                  ${Object.entries(Model.RECORD_TYPES)
+                    .map(
+                      ([value, meta]) =>
+                        `<option value="${escapeHtml(value)}" ${
+                          value === type ? "selected" : ""
+                        }>${escapeHtml(meta.label)}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </label>
+              <label class="field">
+                <span>所属阶段</span>
+                <select name="stageSlug">
+                  ${Model.STAGE_TEMPLATE.map(
+                    (template) =>
+                      `<option value="${escapeHtml(template.slug)}" ${
+                        template.slug === stageSlug ? "selected" : ""
+                      }>${String(template.order).padStart(2, "0")} · ${escapeHtml(
+                        template.name,
+                      )}</option>`,
+                  ).join("")}
+                </select>
+              </label>
+              <label class="field">
+                <span>状态</span>
+                <select name="status">
+                  ${[
+                    ["open", "待处理"],
+                    ["in-progress", "进行中"],
+                    ["blocked", "阻塞"],
+                    ["review", "待复核"],
+                    ["done", "已完成"],
+                    ["closed", "已关闭"],
+                  ]
+                    .map(
+                      ([value, label]) =>
+                        `<option value="${value}" ${
+                          existing && existing.status === value ? "selected" : ""
+                        }>${label}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </label>
+              <label class="field">
+                <span>优先级</span>
+                <select name="priority">
+                  ${[
+                    ["low", "低"],
+                    ["medium", "中"],
+                    ["high", "高"],
+                    ["critical", "紧急"],
+                  ]
+                    .map(
+                      ([value, label]) =>
+                        `<option value="${value}" ${
+                          (existing ? existing.priority : "medium") === value
+                            ? "selected"
+                            : ""
+                        }>${label}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </label>
+            </div>
+            <label class="field">
+              <span>标题</span>
+              <input name="title" required maxlength="120" value="${escapeHtml(
+                existing ? existing.title : "",
+              )}" placeholder="一句话说明进展、问题或结论" />
+            </label>
+            <label class="field">
+              <span>详细内容</span>
+              <textarea name="content" rows="8" maxlength="50000" placeholder="现象、分析、命令、结果、下一步…">${escapeHtml(
+                existing ? existing.content : "",
+              )}</textarea>
+            </label>
+            <div class="form-grid">
+              <label class="field">
+                <span>标签</span>
+                <input name="tags" value="${escapeHtml(
+                  existing ? (existing.tags || []).join(", ") : "",
+                )}" placeholder="drc, timing, macro（逗号分隔）" />
+              </label>
+              <label class="field">
+                <span>截止日期</span>
+                <input name="dueAt" type="date" value="${escapeHtml(
+                  existing && existing.dueAt
+                    ? String(existing.dueAt).slice(0, 10)
+                    : "",
+                )}" />
+              </label>
+            </div>
+            ${
+              attachments.length
+                ? `<div class="existing-attachments"><span class="field-label">已有附件</span><div class="attachment-list">${attachments
+                    .map((attachment) => renderAttachment(attachment, true))
+                    .join("")}</div></div>`
+                : ""
+            }
+            <label class="field upload-field">
+              <span>${existing ? "继续添加附件" : "脱敏附件"}</span>
+              <input name="attachments" type="file" multiple accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.txt,.md,.csv,.rpt,image/png,image/jpeg,image/webp,image/gif,application/pdf,text/plain,text/markdown,text/csv" />
+              <small>每个最多 750 KiB。只上传脱敏截图、小型报告或文本；禁止网表、DEF/GDS、完整日志和任何凭据。</small>
+            </label>
+            <label class="check-row">
+              <input name="sanitized" type="checkbox" />
+              <span>如果选择了附件，我确认内容已经脱敏且允许保存到私有仓库</span>
+            </label>
+            <footer class="modal-actions">
+              ${
+                existing
+                  ? `<button class="btn btn-danger push-left" type="button" data-action="delete-record" data-record-id="${escapeHtml(
+                      existing.id,
+                    )}">删除记录</button>`
+                  : ""
+              }
+              <button class="btn" type="button" data-action="close-modal">取消</button>
+              <button class="btn btn-primary" type="submit">${
+                existing ? "保存修改" : "添加到本地草稿"
+              }</button>
+            </footer>
+          </form>
+        </section>
+      </div>
+    `;
+  }
+
+  function renderImportModal() {
+    return `
+      <div class="modal" role="presentation">
+        <button class="modal-backdrop" type="button" data-action="close-modal" aria-label="关闭"></button>
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="import-title">
+          <header>
+            <div><p class="eyebrow">RESTORE DRAFT</p><h2 id="import-title">导入 FlowTrace JSON</h2></div>
+            <button class="btn btn-icon" type="button" data-action="close-modal" aria-label="关闭">×</button>
+          </header>
+          <form data-form="import">
+            <div class="notice notice-warning">
+              导入会替换当前浏览器里的工作区，但不会自动写入云端。建议先导出当前草稿。
+            </div>
+            <label class="field upload-field">
+              <span>选择 JSON 备份</span>
+              <input name="file" type="file" accept=".json,application/json" required />
+            </label>
+            <footer class="modal-actions">
+              <button class="btn" type="button" data-action="close-modal">取消</button>
+              <button class="btn btn-primary" type="submit">验证并导入本地</button>
+            </footer>
+          </form>
+        </section>
+      </div>
+    `;
+  }
+
+  function renderConflictModal() {
+    return `
+      <div class="modal" role="presentation">
+        <button class="modal-backdrop" type="button" data-action="close-modal" aria-label="关闭"></button>
+        <section class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="conflict-title">
+          <header>
+            <div><p class="eyebrow">VERSION CONFLICT</p><h2 id="conflict-title">云端已有更新，已阻止覆盖</h2></div>
+          </header>
+          <p>另一台设备或另一个页面在你读取后保存了新版本。当前本地草稿仍在内存中，没有丢失。</p>
+          <ol class="steps">
+            <li>先导出当前本地草稿。</li>
+            <li>重新同步云端最新版。</li>
+            <li>对照备份，把仍需要的修改重新补入并保存。</li>
+          </ol>
+          <footer class="modal-actions">
+            <button class="btn" type="button" data-action="export">导出本地草稿</button>
+            <button class="btn btn-primary" type="button" data-action="force-sync">已导出，读取云端</button>
+          </footer>
+        </section>
+      </div>
+    `;
+  }
+
+  function renderSyncConfirmModal() {
+    return `
+      <div class="modal" role="presentation">
+        <button class="modal-backdrop" type="button" data-action="close-modal" aria-label="关闭"></button>
+        <section class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="sync-confirm-title">
+          <header><div><p class="eyebrow">UNSAVED DRAFT</p><h2 id="sync-confirm-title">先处理本地未保存修改</h2></div></header>
+          <p>直接同步会用云端版本替换当前本地草稿。可以先保存，或先导出备份再读取云端。</p>
+          <footer class="modal-actions">
+            <button class="btn" type="button" data-action="close-modal">继续编辑</button>
+            <button class="btn" type="button" data-action="export">导出草稿</button>
+            <button class="btn btn-danger" type="button" data-action="force-sync">丢弃本地并同步</button>
+          </footer>
+        </section>
+      </div>
+    `;
+  }
+
+  function renderModal() {
+    if (!state.modal) return "";
+    if (state.modal.type === "menu") return renderMenuModal();
+    if (state.modal.type === "new-run") return renderNewRunModal();
+    if (state.modal.type === "record") return renderRecordModal(state.modal);
+    if (state.modal.type === "import") return renderImportModal();
+    if (state.modal.type === "conflict") return renderConflictModal();
+    if (state.modal.type === "sync-confirm") return renderSyncConfirmModal();
+    return "";
+  }
+
+  function renderApp() {
+    const run = activeRun();
+    if (!run) {
+      state.error = "工作区里没有可用的 Flow。请导入有效备份后重试。";
+      lock(false);
+      return;
+    }
+    if (!Model.stageTemplate(state.selectedStageSlug)) {
+      state.selectedStageSlug = run.currentStageSlug;
+    }
+    document.title = `${run.name} · FlowTrace`;
+    document.body.className = "is-connected";
+    root.innerHTML = `
+      <div class="app-shell">
+        ${renderTopbar(run)}
+        ${renderSidebar(run)}
+        ${
+          state.sidebarOpen
+            ? '<button class="sidebar-scrim" type="button" data-action="close-sidebar" aria-label="关闭 Flow 导航"></button>'
+            : ""
+        }
+        <main class="main" id="main-content">
+          ${renderRunHeader(run)}
+          ${renderMetrics(run)}
+          ${renderFlowMap(run)}
+          ${renderStagePanel(run)}
+          ${renderRecordsPanel(run)}
+        </main>
+      </div>
+      ${renderModal()}
+    `;
+    renderToast();
+  }
+
+  function render() {
+    if (state.view === "app" && state.workspace) renderApp();
+    else renderLock();
+  }
+
+  async function connect(form) {
+    const data = new FormData(form);
+    const owner = String(data.get("owner") || "").trim();
+    const repo = String(data.get("repo") || "").trim();
+    const enteredToken = String(data.get("token") || "").trim();
+    const token = enteredToken || GitHub.getStoredToken();
+    const remember = data.get("remember") === "on";
+    state.error = "";
+    if (!token) {
+      state.error = "请输入新的 fine-grained access token。";
+      render();
+      return;
+    }
+
+    state.busy = "connect";
+    state.owner = owner;
+    state.repo = repo;
+    state.remember = remember;
+    render();
+    try {
+      const store = new GitHub.GitHubStore({ owner, repo, token });
+      await store.probe();
+      const remote = await store.load();
+      const workspace = remote.exists
+        ? Model.normalizeWorkspace(remote.workspace)
+        : Model.createWorkspace();
+      const errors = Model.validateWorkspace(workspace);
+      if (errors.length) {
+        throw new Error(`私有数据校验失败：${errors.slice(0, 3).join("；")}`);
+      }
+
+      let storageWarning = "";
+      try {
+        GitHub.storeToken(token, remember);
+      } catch (error) {
+        storageWarning = errorMessage(error);
+      }
+      GitHub.savePreferences({ owner, repo });
+      state.store = store;
+      state.workspace = workspace;
+      state.sha = remote.sha;
+      state.dirty = !remote.exists;
+      state.conflict = false;
+      state.selectedStageSlug = Model.activeRun(workspace).currentStageSlug;
+      state.lastSyncAt = remote.exists ? Model.now() : "";
+      state.view = "app";
+      state.hasStoredToken = Boolean(GitHub.getStoredToken());
+      state.error = "";
+      render();
+      showToast(
+        remote.exists
+          ? "私有数据已读取，可以开始编辑。"
+          : "仓库中还没有数据文件，已建立本地初始 Flow；请点击保存到云端。",
+        remote.exists ? "success" : "warning",
+      );
+      if (storageWarning) {
+        global.setTimeout(() => showToast(storageWarning, "warning"), 400);
+      }
+    } catch (error) {
+      state.store = null;
+      state.workspace = null;
+      state.sha = null;
+      state.view = "locked";
+      state.error = errorMessage(error);
+      render();
+    } finally {
+      state.busy = "";
+      render();
+    }
+  }
+
+  async function saveToCloud() {
+    if (!state.store || !state.workspace || state.busy) return;
+    const errors = Model.validateWorkspace(state.workspace);
+    if (errors.length) {
+      showToast(`无法保存：${errors.slice(0, 3).join("；")}`, "danger");
+      return;
+    }
+    if (!state.dirty) {
+      showToast("当前没有需要保存的修改。", "info");
+      return;
+    }
+    state.busy = "save";
+    render();
+    try {
+      const next = Model.prepareForSave(state.workspace);
+      const result = await state.store.save(next, state.sha);
+      state.workspace = next;
+      state.sha = result.sha;
+      state.dirty = false;
+      state.conflict = false;
+      state.lastSyncAt = Model.now();
+      state.modal = null;
+      render();
+      showToast("已安全保存到私有 GitHub 仓库。");
+    } catch (error) {
+      state.conflict = Boolean(error && error.code === "CONFLICT");
+      state.modal = state.conflict ? { type: "conflict" } : null;
+      render();
+      showToast(errorMessage(error), state.conflict ? "warning" : "danger");
+    } finally {
+      state.busy = "";
+      render();
+    }
+  }
+
+  async function syncFromCloud(force = false) {
+    if (!state.store || state.busy) return;
+    if (state.dirty && !force) {
+      state.modal = { type: "sync-confirm" };
+      render();
+      return;
+    }
+    state.busy = "sync";
+    state.modal = null;
+    render();
+    try {
+      const remote = await state.store.load();
+      const workspace = remote.exists
+        ? Model.normalizeWorkspace(remote.workspace)
+        : Model.createWorkspace();
+      const errors = Model.validateWorkspace(workspace);
+      if (errors.length) {
+        throw new Error(`云端数据校验失败：${errors.slice(0, 3).join("；")}`);
+      }
+      state.workspace = workspace;
+      state.sha = remote.sha;
+      state.dirty = !remote.exists;
+      state.conflict = false;
+      state.selectedStageSlug = Model.activeRun(workspace).currentStageSlug;
+      state.lastSyncAt = remote.exists ? Model.now() : "";
+      render();
+      showToast(
+        remote.exists
+          ? "已读取云端最新版本。"
+          : "云端数据文件不存在，已建立新的本地工作区。",
+        remote.exists ? "success" : "warning",
+      );
+    } catch (error) {
+      render();
+      showToast(errorMessage(error), "danger");
+    } finally {
+      state.busy = "";
+      render();
+    }
+  }
+
+  function exportData() {
+    if (!state.workspace) return;
+    const text = Model.exportWorkspace(state.workspace);
+    const run = activeRun();
+    const date = new Date().toISOString().slice(0, 10);
+    const safeName = Model.sanitizeFilename(
+      `${run ? run.name : "workspace"}-${date}.json`,
+    );
+    downloadBlob(new Blob([text], { type: "application/json;charset=utf-8" }), safeName);
+    showToast("JSON 备份已导出；其中不包含访问令牌。", "info");
+  }
+
+  function downloadBlob(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = name;
+    anchor.rel = "noopener";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    global.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function downloadAttachment(id) {
+    const attachment = state.workspace.attachments.find((item) => item.id === id);
+    if (!attachment) return;
+    try {
+      const match = /^data:([^;,]*)(;base64)?,(.*)$/s.exec(attachment.dataUrl);
+      if (!match) throw new Error("附件格式无效。");
+      const mime = match[1] || "application/octet-stream";
+      let bytes;
+      if (match[2]) {
+        const binary = atob(match[3].replace(/\s/g, ""));
+        bytes = new Uint8Array(binary.length);
+        for (let index = 0; index < binary.length; index += 1) {
+          bytes[index] = binary.charCodeAt(index);
+        }
+      } else {
+        bytes = new TextEncoder().encode(decodeURIComponent(match[3]));
+      }
+      downloadBlob(new Blob([bytes], { type: mime }), attachment.name);
+    } catch (error) {
+      showToast(errorMessage(error), "danger");
+    }
+  }
+
+  function lock(forget) {
+    if (forget) GitHub.clearToken();
+    state.store = null;
+    state.workspace = null;
+    state.sha = null;
+    state.dirty = false;
+    state.conflict = false;
+    state.busy = "";
+    state.modal = null;
+    state.view = "locked";
+    state.hasStoredToken = Boolean(GitHub.getStoredToken());
+    state.remember = hasTrustedToken();
+    state.error = "";
+    render();
+    showToast(
+      forget ? "本设备令牌已清除，页面已锁定。" : "页面已锁定。",
+      "info",
+    );
+  }
+
+  function createRun(form) {
+    const data = new FormData(form);
+    const run = Model.createRun(data.get("name"));
+    run.design = String(data.get("design") || "").trim().slice(0, 120);
+    run.owner = String(data.get("owner") || "").trim().slice(0, 80);
+    state.workspace.runs.push(run);
+    state.workspace.activeRunId = run.id;
+    state.selectedStageSlug = "init";
+    state.modal = null;
+    markDirty(run);
+    render();
+    showToast("已创建包含 14 个阶段的新 Flow；保存后才会同步到云端。");
+  }
+
+  function readAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(new Error(`无法读取附件：${file.name}`));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function validateAttachment(file) {
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      throw new Error(`${file.name} 超过 750 KiB，未添加。`);
+    }
+    const extension = String(file.name).toLowerCase().split(".").pop();
+    const allowedExtensions = new Set([
+      "png",
+      "jpg",
+      "jpeg",
+      "webp",
+      "gif",
+      "pdf",
+      "txt",
+      "md",
+      "csv",
+      "rpt",
+    ]);
+    if (!allowedExtensions.has(extension)) {
+      throw new Error(
+        `${file.name} 的类型不允许。仅支持脱敏图片、PDF 和小型文本/报告。`,
+      );
+    }
+    const allowedMimes = new Set([
+      "",
+      "image/png",
+      "image/jpeg",
+      "image/webp",
+      "image/gif",
+      "application/pdf",
+      "application/octet-stream",
+      "text/plain",
+      "text/markdown",
+      "text/csv",
+    ]);
+    if (!allowedMimes.has(String(file.type || "").toLowerCase())) {
+      throw new Error(`${file.name} 的实际内容类型不允许，未添加。`);
+    }
+  }
+
+  async function saveRecord(form) {
+    const data = new FormData(form);
+    const run = activeRun();
+    const recordId = form.dataset.recordId || "";
+    const existing = recordId
+      ? state.workspace.records.find((record) => record.id === recordId)
+      : null;
+    const files = Array.from(form.elements.attachments.files || []);
+    if (files.length && data.get("sanitized") !== "on") {
+      showToast("添加附件前，请确认附件已经脱敏。", "warning");
+      return;
+    }
+    try {
+      files.forEach(validateAttachment);
+      const timestamp = Model.now();
+      const preparedAttachments = [];
+      for (const file of files) {
+        preparedAttachments.push({
+          id: Model.uid("attachment"),
+          recordId: existing ? existing.id : null,
+          name: Model.sanitizeFilename(file.name),
+          mime: file.type || "application/octet-stream",
+          size: file.size,
+          dataUrl: await readAsDataUrl(file),
+          createdAt: timestamp,
+        });
+      }
+      const record =
+        existing ||
+        {
+          id: Model.uid("record"),
+          runId: run.id,
+          createdAt: timestamp,
+          attachmentIds: [],
+        };
+      record.stageSlug = String(data.get("stageSlug") || state.selectedStageSlug);
+      record.type = String(data.get("type") || "progress");
+      record.title =
+        String(data.get("title") || "").trim().slice(0, 120) || "未命名记录";
+      record.content = String(data.get("content") || "").slice(0, 50000);
+      record.status = String(data.get("status") || "open").slice(0, 40);
+      record.priority = String(data.get("priority") || "medium");
+      record.tags = String(data.get("tags") || "")
+        .split(/[,，]/)
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+        .slice(0, 20);
+      record.dueAt = data.get("dueAt")
+        ? `${String(data.get("dueAt"))}T00:00:00.000Z`
+        : null;
+      record.updatedAt = timestamp;
+      if (!existing) state.workspace.records.push(record);
+
+      for (const attachment of preparedAttachments) {
+        attachment.recordId = record.id;
+        state.workspace.attachments.push(attachment);
+        record.attachmentIds.push(attachment.id);
+      }
+      state.selectedStageSlug = record.stageSlug;
+      state.modal = null;
+      markDirty(run);
+      render();
+      showToast(existing ? "记录已更新到本地草稿。" : "记录已加入本地草稿。");
+    } catch (error) {
+      showToast(errorMessage(error), "danger");
+    }
+  }
+
+  async function importData(form) {
+    const file = form.elements.file.files[0];
+    if (!file) return;
+    try {
+      if (file.size > MAX_IMPORT_BYTES) {
+        throw new Error("备份超过 10 MiB 安全上限，未导入。");
+      }
+      const raw = await file.text();
+      const workspace = Model.normalizeWorkspace(JSON.parse(raw));
+      const errors = Model.validateWorkspace(workspace);
+      if (errors.length) {
+        throw new Error(`备份校验失败：${errors.slice(0, 5).join("；")}`);
+      }
+      state.workspace = workspace;
+      state.selectedStageSlug = Model.activeRun(workspace).currentStageSlug;
+      state.dirty = true;
+      state.conflict = false;
+      state.modal = null;
+      Model.touchWorkspace(workspace, Model.activeRun(workspace));
+      render();
+      showToast("备份已导入本地草稿；确认后请手动保存到云端。", "warning");
+    } catch (error) {
+      showToast(`导入失败：${errorMessage(error)}`, "danger");
+    }
+  }
+
+  function deleteRecord(id) {
+    const record = state.workspace.records.find((item) => item.id === id);
+    if (!record) return;
+    if (!global.confirm(`确定删除记录“${record.title}”及其附件吗？`)) return;
+    const attachmentIds = new Set(record.attachmentIds || []);
+    state.workspace.records = state.workspace.records.filter(
+      (item) => item.id !== id,
+    );
+    state.workspace.attachments = state.workspace.attachments.filter(
+      (attachment) =>
+        attachment.recordId !== id && !attachmentIds.has(attachment.id),
+    );
+    state.modal = null;
+    markDirty(activeRun());
+    render();
+    showToast("记录已从本地草稿删除。", "warning");
+  }
+
+  function deleteAttachment(id) {
+    const attachment = state.workspace.attachments.find((item) => item.id === id);
+    if (!attachment) return;
+    if (!global.confirm(`确定删除附件“${attachment.name}”吗？`)) return;
+    state.workspace.attachments = state.workspace.attachments.filter(
+      (item) => item.id !== id,
+    );
+    for (const record of state.workspace.records) {
+      record.attachmentIds = (record.attachmentIds || []).filter(
+        (attachmentId) => attachmentId !== id,
+      );
+    }
+    markDirty(activeRun());
+    render();
+    showToast("附件已从本地草稿删除。", "warning");
+  }
+
+  function archiveRun(run) {
+    if (
+      !global.confirm(
+        `归档“${run.name}”？数据不会删除，之后可通过“显示已归档 Flow”恢复。`,
+      )
+    ) {
+      return;
+    }
+    run.archived = true;
+    const next = state.workspace.runs.find((item) => !item.archived);
+    if (next) {
+      state.workspace.activeRunId = next.id;
+      state.selectedStageSlug = next.currentStageSlug;
+    } else {
+      const replacement = Model.createRun("新的 Flow");
+      state.workspace.runs.push(replacement);
+      state.workspace.activeRunId = replacement.id;
+      state.selectedStageSlug = "init";
+    }
+    markDirty(run);
+    render();
+    showToast("Flow 已归档到本地草稿。", "info");
+  }
+
+  function handleClick(event) {
+    const target = event.target.closest("[data-action]");
+    if (!target) return;
+    const action = target.dataset.action;
+    if (target.tagName === "A") event.preventDefault();
+
+    if (action === "select-stage") {
+      state.selectedStageSlug = target.dataset.stage;
+      render();
+    } else if (action === "mark-current") {
+      const run = activeRun();
+      run.currentStageSlug = state.selectedStageSlug;
+      markDirty(run);
+      render();
+      showToast("当前阶段已更新到本地草稿。");
+    } else if (action === "select-run") {
+      const run = state.workspace.runs.find(
+        (item) => item.id === target.dataset.runId,
+      );
+      if (!run) return;
+      state.workspace.activeRunId = run.id;
+      state.selectedStageSlug = run.currentStageSlug;
+      state.sidebarOpen = false;
+      markDirty(run);
+      render();
+    } else if (action === "toggle-sidebar") {
+      state.sidebarOpen = !state.sidebarOpen;
+      render();
+    } else if (action === "close-sidebar") {
+      state.sidebarOpen = false;
+      render();
+    } else if (action === "new-run") {
+      state.sidebarOpen = false;
+      state.modal = { type: "new-run" };
+      render();
+    } else if (action === "new-record") {
+      state.modal = {
+        type: "record",
+        recordType: target.dataset.recordType || "progress",
+        stageSlug: state.selectedStageSlug,
+      };
+      render();
+    } else if (action === "edit-record") {
+      state.modal = { type: "record", recordId: target.dataset.recordId };
+      render();
+    } else if (action === "delete-record") {
+      deleteRecord(target.dataset.recordId);
+    } else if (action === "delete-attachment") {
+      deleteAttachment(target.dataset.attachmentId);
+    } else if (action === "download-attachment") {
+      downloadAttachment(target.dataset.attachmentId);
+    } else if (action === "open-menu") {
+      state.modal = { type: "menu" };
+      render();
+    } else if (action === "close-modal") {
+      state.modal = null;
+      render();
+    } else if (action === "sync") {
+      syncFromCloud();
+    } else if (action === "force-sync") {
+      syncFromCloud(true);
+    } else if (action === "save") {
+      saveToCloud();
+    } else if (action === "export") {
+      exportData();
+      if (state.modal && state.modal.type === "menu") {
+        state.modal = null;
+        render();
+      }
+    } else if (action === "import") {
+      state.modal = { type: "import" };
+      render();
+    } else if (action === "lock") {
+      if (
+        !state.dirty ||
+        global.confirm("本地有未保存修改，仍然锁定并丢弃这些修改吗？")
+      ) {
+        lock(false);
+      }
+    } else if (action === "forget") {
+      if (
+        global.confirm(
+          "忘记本设备会清除浏览器里的访问令牌并锁定页面，确定继续吗？",
+        )
+      ) {
+        lock(true);
+      }
+    } else if (action === "archive-run") {
+      archiveRun(activeRun());
+    } else if (action === "restore-run") {
+      const run = activeRun();
+      run.archived = false;
+      markDirty(run);
+      render();
+      showToast("Flow 已恢复到本地草稿。");
+    }
+  }
+
+  function handleChange(event) {
+    const target = event.target.closest("[data-action]");
+    if (!target || !state.workspace) return;
+    const action = target.dataset.action;
+    const run = activeRun();
+    if (action === "stage-status") {
+      const stage = Model.stageState(run, target.dataset.stage);
+      if (!stage || !Model.STATUS_META[target.value]) return;
+      stage.status = target.value;
+      markDirty(run, stage);
+      render();
+    } else if (action === "stage-next" || action === "stage-note") {
+      const stage = Model.stageState(run, target.dataset.stage);
+      if (!stage) return;
+      const field = action === "stage-next" ? "nextStep" : "note";
+      stage[field] = String(target.value).slice(
+        0,
+        field === "nextStep" ? 1000 : 10000,
+      );
+      markDirty(run, stage);
+      render();
+    } else if (action === "gate-toggle") {
+      const stage = Model.stageState(run, target.dataset.stage);
+      const gate = stage
+        ? stage.gates.find((item) => item.id === target.dataset.gateId)
+        : null;
+      if (!gate) return;
+      gate.done = target.checked;
+      markDirty(run, stage);
+      render();
+    } else if (action === "run-field") {
+      const field = target.dataset.field;
+      if (!["name", "design", "owner"].includes(field)) return;
+      const limits = { name: 80, design: 120, owner: 80 };
+      const value = String(target.value).trim().slice(0, limits[field]);
+      run[field] = field === "name" ? value || "未命名 Flow" : value;
+      markDirty(run);
+      render();
+    } else if (action === "record-scope") {
+      state.recordScope = target.value === "all" ? "all" : "stage";
+      renderRecordList();
+    } else if (action === "record-type-filter") {
+      state.recordType = Model.RECORD_TYPES[target.value] ? target.value : "all";
+      renderRecordList();
+    } else if (action === "show-archived") {
+      state.showArchived = target.checked;
+      render();
+    }
+  }
+
+  function handleInput(event) {
+    const target = event.target.closest('[data-action="search-records"]');
+    if (!target) return;
+    state.query = target.value;
+    renderRecordList();
+  }
+
+  async function handleSubmit(event) {
+    const form = event.target.closest("[data-form]");
+    if (!form) return;
+    event.preventDefault();
+    const type = form.dataset.form;
+    if (type === "connect") await connect(form);
+    else if (type === "new-run") createRun(form);
+    else if (type === "record") await saveRecord(form);
+    else if (type === "import") await importData(form);
+  }
+
+  root.addEventListener("click", handleClick);
+  root.addEventListener("change", handleChange);
+  root.addEventListener("input", handleInput);
+  root.addEventListener("submit", handleSubmit);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && state.modal) {
+      state.modal = null;
+      render();
+    }
+  });
+  global.addEventListener("beforeunload", (event) => {
+    if (!state.dirty) return;
+    event.preventDefault();
+    event.returnValue = "";
+  });
+  global.addEventListener("offline", () =>
+    showToast("网络已断开；本地草稿仍保留在当前页面。", "warning"),
+  );
+  global.addEventListener("online", () =>
+    showToast("网络已恢复，需要时请手动同步。", "info"),
+  );
+
+  render();
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+  </body>
 </html>
