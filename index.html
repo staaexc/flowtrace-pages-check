@@ -8,7 +8,7 @@
     <meta name="referrer" content="no-referrer" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'sha256-lQ2inaZ/Qklk8HkxZ9OuY0NrCtvPYhqtwMbF52Jh51k='; style-src 'sha256-LNzu56dJYWNHwSgeLvW02Nr9QHrpRpBI/oG+5A4qYjQ='; connect-src https://api.github.com; img-src data:; font-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';"
+      content="default-src 'none'; script-src 'sha256-vQIsxqnwC2bUVVByLgseAwhxr3nIxCirZLSYWfRfbHg='; style-src 'sha256-IewHZY8qP6wwSYLaAyS8ogs3gOQ9dOzkbe1qV5cj3Do='; connect-src https://api.github.com; img-src data:; font-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';"
     />
     <meta
       name="description"
@@ -3174,20 +3174,110 @@ body.is-previewing {
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   margin: 0;
   overflow: hidden;
-  background: #eef1f4;
+  background: #e9eef2;
+}
+
+.attachment-preview-toolbar {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: #e4eaee;
+}
+
+.attachment-preview-toolbar .btn {
+  min-height: 36px;
+  border-color: #bcc8d0;
+  background: #f8fafb;
+}
+
+.attachment-preview-toolbar .btn:hover {
+  border-color: var(--accent);
+  background: #edf5f1;
+}
+
+.attachment-preview-toolbar .btn[aria-pressed="true"] {
+  border-color: #8eb8a7;
+  background: #dfeee7;
+  color: #155b44;
+}
+
+.preview-zoom-step {
+  flex: 0 0 38px;
+  width: 38px;
+  min-width: 38px;
+  padding: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.preview-zoom-value {
+  flex: 0 0 58px;
+  min-width: 58px;
+  color: var(--text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  text-align: center;
+}
+
+.preview-zoom-mode {
+  flex: 0 1 auto;
+  padding-inline: 12px;
+}
+
+.attachment-preview-stage {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: safe center;
+  justify-content: safe center;
+  padding: 18px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+  background-color: #e9eef2;
+  background-image:
+    linear-gradient(rgba(86, 106, 120, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(86, 106, 120, 0.055) 1px, transparent 1px);
+  background-size: 24px 24px;
+  scrollbar-color: #aebbc4 transparent;
+}
+
+.attachment-preview-stage:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -3px;
+}
+
+.attachment-preview-canvas {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(34, 49, 60, 0.15);
 }
 
 .attachment-preview-image {
-  align-self: center;
-  justify-self: center;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
   object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .attachment-preview-meta {
@@ -3306,6 +3396,30 @@ body.is-previewing {
 
   .attachment-preview-header h2 {
     font-size: 16px;
+  }
+
+  .attachment-preview-toolbar {
+    grid-template-columns: 40px 52px 40px minmax(68px, 1fr) minmax(60px, 1fr);
+    display: grid;
+    gap: 5px;
+    padding: 7px 8px;
+  }
+
+  .attachment-preview-toolbar .btn {
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    padding-inline: 6px;
+  }
+
+  .preview-zoom-step,
+  .preview-zoom-value {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .attachment-preview-stage {
+    padding: 12px;
   }
 
   .attachment-preview-meta {
@@ -4211,6 +4325,9 @@ body.is-previewing {
   const MAX_IMPORT_BYTES = 10 * 1024 * 1024;
   const DEFAULT_OWNER = "staaexc";
   const DEFAULT_REPO = "flowtrace-private-data";
+  const PREVIEW_ZOOM_MIN = 0.25;
+  const PREVIEW_ZOOM_MAX = 4;
+  const PREVIEW_ZOOM_STEP = 1.25;
 
   if (!root || !Model || !GitHub) {
     if (root) {
@@ -4249,6 +4366,13 @@ body.is-previewing {
   };
   let previewReturnFocus = null;
   let previewDownload = null;
+  let previewZoom = {
+    mode: "fit",
+    scale: 1,
+    fitScale: 1,
+    naturalWidth: 0,
+    naturalHeight: 0,
+  };
 
   function hasTrustedToken() {
     try {
@@ -4379,6 +4503,121 @@ body.is-previewing {
       : "";
   }
 
+  function clampPreviewZoom(value) {
+    const numeric = Number(value);
+    const safe = Number.isFinite(numeric) ? numeric : 1;
+    return Math.min(PREVIEW_ZOOM_MAX, Math.max(PREVIEW_ZOOM_MIN, safe));
+  }
+
+  function previewStageSize(dialog) {
+    const stage = dialog && dialog.querySelector(".attachment-preview-stage");
+    if (!stage) return { width: 1, height: 1 };
+    const style = global.getComputedStyle(stage);
+    const horizontalPadding =
+      Number.parseFloat(style.paddingLeft || "0") +
+      Number.parseFloat(style.paddingRight || "0");
+    const verticalPadding =
+      Number.parseFloat(style.paddingTop || "0") +
+      Number.parseFloat(style.paddingBottom || "0");
+    return {
+      width: Math.max(1, stage.clientWidth - horizontalPadding),
+      height: Math.max(1, stage.clientHeight - verticalPadding),
+    };
+  }
+
+  function updatePreviewZoomControls(dialog) {
+    if (!dialog) return;
+    const percent = Math.round(previewZoom.scale * 100);
+    const output = dialog.querySelector("[data-preview-zoom-value]");
+    const out = dialog.querySelector("[data-preview-zoom-out]");
+    const zoomIn = dialog.querySelector("[data-preview-zoom-in]");
+    const fit = dialog.querySelector("[data-preview-zoom-fit]");
+    const actual = dialog.querySelector("[data-preview-zoom-actual]");
+    if (output) output.textContent = `${percent}%`;
+    if (out) out.disabled = previewZoom.scale <= PREVIEW_ZOOM_MIN + 0.001;
+    if (zoomIn) zoomIn.disabled = previewZoom.scale >= PREVIEW_ZOOM_MAX - 0.001;
+    if (fit) fit.setAttribute("aria-pressed", String(previewZoom.mode === "fit"));
+    if (actual) {
+      actual.setAttribute(
+        "aria-pressed",
+        String(previewZoom.mode === "actual" && Math.abs(previewZoom.scale - 1) < 0.001),
+      );
+    }
+    dialog.dataset.previewZoomMode = previewZoom.mode;
+  }
+
+  function applyAttachmentPreviewZoom(value, mode = "custom") {
+    const dialog = document.getElementById("attachment-preview-dialog");
+    if (!dialog) return;
+    const image = dialog.querySelector(".attachment-preview-image");
+    const canvas = dialog.querySelector(".attachment-preview-canvas");
+    if (!image || !canvas) return;
+    const naturalWidth = image.naturalWidth || previewZoom.naturalWidth;
+    const naturalHeight = image.naturalHeight || previewZoom.naturalHeight;
+    if (!naturalWidth || !naturalHeight) return;
+
+    const scale = clampPreviewZoom(value);
+    previewZoom = {
+      ...previewZoom,
+      mode,
+      scale,
+      naturalWidth,
+      naturalHeight,
+    };
+    canvas.style.width = `${naturalWidth * scale}px`;
+    canvas.style.height = `${naturalHeight * scale}px`;
+    updatePreviewZoomControls(dialog);
+  }
+
+  function fitAttachmentPreview(dialog) {
+    const target = dialog || document.getElementById("attachment-preview-dialog");
+    if (!target) return;
+    const image = target.querySelector(".attachment-preview-image");
+    if (!image) return;
+    const naturalWidth = image.naturalWidth || previewZoom.naturalWidth;
+    const naturalHeight = image.naturalHeight || previewZoom.naturalHeight;
+    if (!naturalWidth || !naturalHeight) return;
+    const available = previewStageSize(target);
+    const fitScale = clampPreviewZoom(
+      Math.min(
+        available.width / naturalWidth,
+        available.height / naturalHeight,
+      ),
+    );
+    previewZoom.fitScale = fitScale;
+    applyAttachmentPreviewZoom(fitScale, "fit");
+  }
+
+  function resetAttachmentPreviewZoom(dialog) {
+    const image = dialog && dialog.querySelector(".attachment-preview-image");
+    const knownNaturalWidth =
+      (image && image.naturalWidth) || previewZoom.naturalWidth || 0;
+    const knownNaturalHeight =
+      (image && image.naturalHeight) || previewZoom.naturalHeight || 0;
+    previewZoom = {
+      mode: "fit",
+      scale: 1,
+      fitScale: 1,
+      naturalWidth: knownNaturalWidth,
+      naturalHeight: knownNaturalHeight,
+    };
+    const canvas = dialog && dialog.querySelector(".attachment-preview-canvas");
+    const stage = dialog && dialog.querySelector(".attachment-preview-stage");
+    if (canvas) {
+      canvas.style.removeProperty("width");
+      canvas.style.removeProperty("height");
+    }
+    if (stage) {
+      stage.scrollLeft = 0;
+      stage.scrollTop = 0;
+    }
+    updatePreviewZoomControls(dialog);
+  }
+
+  function changeAttachmentPreviewZoom(factor) {
+    applyAttachmentPreviewZoom(previewZoom.scale * factor, "custom");
+  }
+
   function ensureAttachmentPreviewDialog() {
     let dialog = document.getElementById("attachment-preview-dialog");
     if (dialog) return dialog;
@@ -4397,7 +4636,18 @@ body.is-previewing {
           <button class="btn btn-icon preview-close" type="button" data-preview-close aria-label="关闭图片查看器" title="关闭">×</button>
         </header>
         <figure class="attachment-preview-figure">
-          <img class="attachment-preview-image" alt="" />
+          <div class="attachment-preview-toolbar" data-preview-zoom-controls role="toolbar" aria-label="图片缩放工具">
+            <button class="btn btn-icon preview-zoom-step" type="button" data-preview-zoom-out aria-label="缩小图片" title="缩小（-）">−</button>
+            <output class="preview-zoom-value" data-preview-zoom-value aria-live="polite" aria-label="当前缩放比例">100%</output>
+            <button class="btn btn-icon preview-zoom-step" type="button" data-preview-zoom-in aria-label="放大图片" title="放大（+）">+</button>
+            <button class="btn preview-zoom-mode" type="button" data-preview-zoom-fit aria-pressed="true" title="适配窗口（0）">适配</button>
+            <button class="btn preview-zoom-mode" type="button" data-preview-zoom-actual aria-pressed="false" title="按原始像素显示">100%</button>
+          </div>
+          <div class="attachment-preview-stage" tabindex="0" aria-label="图片查看区域，可用滚轮、加号、减号和数字 0 调整缩放">
+            <div class="attachment-preview-canvas">
+              <img class="attachment-preview-image" alt="" draggable="false" />
+            </div>
+          </div>
           <figcaption class="attachment-preview-meta"></figcaption>
         </figure>
         <footer class="attachment-preview-actions">
@@ -4413,11 +4663,58 @@ body.is-previewing {
       }
       if (event.target.closest("[data-preview-download]") && previewDownload) {
         previewDownload();
+        return;
+      }
+      if (event.target.closest("[data-preview-zoom-out]")) {
+        changeAttachmentPreviewZoom(1 / PREVIEW_ZOOM_STEP);
+        return;
+      }
+      if (event.target.closest("[data-preview-zoom-in]")) {
+        changeAttachmentPreviewZoom(PREVIEW_ZOOM_STEP);
+        return;
+      }
+      if (event.target.closest("[data-preview-zoom-fit]")) {
+        fitAttachmentPreview(dialog);
+        return;
+      }
+      if (event.target.closest("[data-preview-zoom-actual]")) {
+        applyAttachmentPreviewZoom(1, "actual");
       }
     });
+    dialog.addEventListener("wheel",
+      (event) => {
+        if (!event.target.closest(".attachment-preview-stage") || !event.deltaY) return;
+        event.preventDefault();
+        changeAttachmentPreviewZoom(
+          event.deltaY < 0 ? PREVIEW_ZOOM_STEP : 1 / PREVIEW_ZOOM_STEP,
+        );
+      }, { passive: false },
+    );
     dialog.addEventListener("cancel", (event) => {
       event.preventDefault();
       closeAttachmentPreview();
+    });
+    const image = dialog.querySelector(".attachment-preview-image");
+    if (image) {
+      image.addEventListener("load", () => {
+        previewZoom.naturalWidth = image.naturalWidth;
+        previewZoom.naturalHeight = image.naturalHeight;
+        const applyFit = () => fitAttachmentPreview(dialog);
+        if (typeof global.requestAnimationFrame === "function") {
+          global.requestAnimationFrame(applyFit);
+        } else {
+          global.setTimeout(applyFit, 0);
+        }
+      });
+    }
+    global.addEventListener("resize", () => {
+      if (!dialog.open || previewZoom.mode !== "fit") return;
+      const applyFit = () => fitAttachmentPreview(dialog);
+      if (typeof global.requestAnimationFrame === "function") {
+        global.requestAnimationFrame(applyFit);
+      } else {
+        global.setTimeout(applyFit, 0);
+      }
     });
     document.body.appendChild(dialog);
     return dialog;
@@ -4438,6 +4735,7 @@ body.is-previewing {
     const image = dialog.querySelector(".attachment-preview-image");
     const title = dialog.querySelector("#attachment-preview-title");
     const meta = dialog.querySelector(".attachment-preview-meta");
+    resetAttachmentPreviewZoom(dialog);
     if (image) {
       image.src = attachment.dataUrl;
       image.alt = `图片附件：${name}`;
@@ -4455,6 +4753,15 @@ body.is-previewing {
     };
     if (!dialog.open) dialog.showModal();
     document.body.classList.add("is-previewing");
+    fitAttachmentPreview(dialog);
+    if (image && image.complete && image.naturalWidth) {
+      const applyFit = () => fitAttachmentPreview(dialog);
+      if (typeof global.requestAnimationFrame === "function") {
+        global.requestAnimationFrame(applyFit);
+      } else {
+        global.setTimeout(applyFit, 0);
+      }
+    }
     const focusClose = () => {
       const close = dialog.querySelector("[data-preview-close]");
       if (close) close.focus();
@@ -6730,10 +7037,27 @@ body.is-previewing {
   document.addEventListener("paste", handlePaste);
   document.addEventListener("keydown", (event) => {
     const previewDialog = document.getElementById("attachment-preview-dialog");
-    if (event.key === "Escape" && previewDialog && previewDialog.open) {
-      event.preventDefault();
-      closeAttachmentPreview();
-      return;
+    if (previewDialog && previewDialog.open) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeAttachmentPreview();
+        return;
+      }
+      if (event.key === "+" || event.key === "=") {
+        event.preventDefault();
+        changeAttachmentPreviewZoom(PREVIEW_ZOOM_STEP);
+        return;
+      }
+      if (event.key === "-" || event.key === "_") {
+        event.preventDefault();
+        changeAttachmentPreviewZoom(1 / PREVIEW_ZOOM_STEP);
+        return;
+      }
+      if (event.key === "0") {
+        event.preventDefault();
+        fitAttachmentPreview(previewDialog);
+        return;
+      }
     }
     if (event.key === "Escape" && state.modal) {
       closeModal();
