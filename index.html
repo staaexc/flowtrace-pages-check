@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#07110e" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#f6f7f9" />
+    <meta name="color-scheme" content="light" />
     <meta name="referrer" content="no-referrer" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'sha256-Dfa6lsuoRrIi6pdsN3obyTqmO8RG8spYy9wqLXYwa+w='; style-src 'sha256-V6Anprh9JsFv4rH/KtX0i6IiVfuv6o6HctJw4YNJJgE='; connect-src https://api.github.com; img-src data:; font-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';"
+      content="default-src 'none'; script-src 'sha256-lQ2inaZ/Qklk8HkxZ9OuY0NrCtvPYhqtwMbF52Jh51k='; style-src 'sha256-LNzu56dJYWNHwSgeLvW02Nr9QHrpRpBI/oG+5A4qYjQ='; connect-src https://api.github.com; img-src data:; font-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';"
     />
     <meta
       name="description"
@@ -16,29 +16,30 @@
     />
     <title>FlowTrace</title>
     <style>:root {
-  --bg: #07110e;
-  --bg-soft: #0a1713;
-  --surface: rgba(15, 31, 25, 0.94);
-  --surface-2: #12251e;
-  --surface-3: #173026;
-  --line: rgba(171, 211, 193, 0.14);
-  --line-strong: rgba(171, 211, 193, 0.28);
-  --text: #eef8f2;
-  --text-soft: #b6c9bf;
-  --muted: #81988d;
-  --green: #7ee2b8;
-  --green-strong: #37c889;
-  --green-deep: #1b8d62;
-  --mint: #b7f5d9;
-  --amber: #f3c978;
-  --red: #ff8e8e;
-  --blue: #83c7ff;
-  --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-  --sidebar: 270px;
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --bg-soft: #eef1f4;
+  --surface: #ffffff;
+  --surface-2: #f8fafb;
+  --surface-3: #eef3f1;
+  --line: #dfe4ea;
+  --line-strong: #cbd3dc;
+  --text: #17202a;
+  --text-soft: #4f5d6b;
+  --muted: #73808d;
+  --green: #1f7a55;
+  --green-strong: #176443;
+  --green-deep: #0f5538;
+  --mint: #176443;
+  --amber: #8a5900;
+  --red: #b4232c;
+  --blue: #2667b2;
+  --shadow: 0 18px 48px rgba(22, 34, 45, 0.16);
+  --radius-xl: 10px;
+  --radius-lg: 8px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+  --sidebar: 256px;
   --font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Microsoft YaHei", sans-serif;
 }
@@ -58,10 +59,7 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at 12% -5%, rgba(55, 200, 137, 0.17), transparent 34rem),
-    radial-gradient(circle at 92% 10%, rgba(54, 126, 96, 0.13), transparent 30rem),
-    linear-gradient(150deg, #07110e 0%, #081610 45%, #050b09 100%);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font);
   font-size: 15px;
@@ -88,7 +86,7 @@ button {
 }
 
 a {
-  color: var(--green);
+  color: var(--blue);
 }
 
 img {
@@ -117,8 +115,8 @@ img {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(126, 226, 184, 0.72);
-  outline-offset: 3px;
+  outline: 3px solid rgba(31, 122, 85, 0.32);
+  outline-offset: 2px;
 }
 
 .boot-screen {
@@ -136,13 +134,13 @@ img {
   place-items: center;
   width: 48px;
   height: 48px;
-  border: 1px solid rgba(126, 226, 184, 0.4);
-  border-radius: 16px;
-  background: linear-gradient(145deg, rgba(126, 226, 184, 0.22), rgba(12, 34, 27, 0.8));
-  color: var(--mint);
+  border: 1px solid #b9d5c8;
+  border-radius: 8px;
+  background: #e9f3ee;
+  color: var(--green-strong);
   font-weight: 800;
-  letter-spacing: -0.04em;
-  box-shadow: 0 0 40px rgba(55, 200, 137, 0.14);
+  letter-spacing: 0;
+  box-shadow: none;
 }
 
 .boot-mark {
@@ -152,7 +150,7 @@ img {
 @keyframes breathe {
   50% {
     transform: translateY(-4px);
-    box-shadow: 0 0 52px rgba(55, 200, 137, 0.28);
+    box-shadow: 0 8px 20px rgba(31, 122, 85, 0.14);
   }
 }
 
@@ -173,12 +171,7 @@ img {
   position: fixed;
   z-index: -1;
   inset: 0;
-  opacity: 0.3;
-  background-image:
-    linear-gradient(rgba(151, 207, 180, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(151, 207, 180, 0.035) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(circle at center, black, transparent 78%);
+  display: none;
 }
 
 .lock-intro {
@@ -193,7 +186,7 @@ img {
   color: var(--green);
   font-size: 12px;
   font-weight: 750;
-  letter-spacing: 0.14em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -207,10 +200,10 @@ img {
 .lock-title {
   margin: 0;
   max-width: 720px;
-  font-size: clamp(42px, 6vw, 78px);
+  font-size: 56px;
   font-weight: 690;
   line-height: 1.02;
-  letter-spacing: -0.055em;
+  letter-spacing: 0;
 }
 
 .lock-title em {
@@ -222,7 +215,7 @@ img {
   max-width: 600px;
   margin: 24px 0 0;
   color: var(--text-soft);
-  font-size: clamp(16px, 1.8vw, 19px);
+  font-size: 18px;
 }
 
 .privacy-points {
@@ -237,7 +230,7 @@ img {
   padding: 17px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: rgba(12, 25, 20, 0.62);
+  background: #ffffff;
 }
 
 .privacy-point strong {
@@ -256,9 +249,7 @@ img {
   padding: clamp(24px, 3vw, 34px);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-xl);
-  background:
-    linear-gradient(165deg, rgba(23, 48, 38, 0.9), rgba(9, 20, 16, 0.96)),
-    var(--surface);
+  background: var(--surface);
   box-shadow: var(--shadow);
   overflow: hidden;
 }
@@ -270,11 +261,10 @@ img {
   right: -70px;
   width: 170px;
   height: 170px;
-  border: 1px solid rgba(126, 226, 184, 0.12);
+  border: 0;
   border-radius: 50%;
-  box-shadow:
-    0 0 0 24px rgba(126, 226, 184, 0.02),
-    0 0 0 52px rgba(126, 226, 184, 0.015);
+  box-shadow: none;
+  display: none;
   pointer-events: none;
 }
 
@@ -289,7 +279,7 @@ img {
 .panel-title {
   margin: 0;
   font-size: 20px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .connect-head p {
@@ -321,7 +311,7 @@ img {
   color: var(--text-soft);
   font-size: 12px;
   font-weight: 650;
-  letter-spacing: 0.015em;
+  letter-spacing: 0;
 }
 
 .field small,
@@ -338,9 +328,9 @@ select {
   min-height: 46px;
   padding: 11px 13px;
   border: 1px solid var(--line-strong);
-  border-radius: 11px;
+  border-radius: 6px;
   outline: none;
-  background: rgba(4, 12, 9, 0.72);
+  background: #ffffff;
   color: var(--text);
   transition:
     border-color 160ms ease,
@@ -356,20 +346,20 @@ textarea {
 input:hover,
 textarea:hover,
 select:hover {
-  border-color: rgba(126, 226, 184, 0.38);
+  border-color: #9aa8b6;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
   border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(126, 226, 184, 0.11);
-  background: rgba(4, 12, 9, 0.92);
+  box-shadow: 0 0 0 3px rgba(31, 122, 85, 0.12);
+  background: #ffffff;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #5d7167;
+  color: #98a2ad;
 }
 
 select {
@@ -397,10 +387,10 @@ select {
 .security-note,
 .callout {
   padding: 13px 14px;
-  border: 1px solid rgba(243, 201, 120, 0.18);
-  border-radius: 11px;
-  background: rgba(243, 201, 120, 0.06);
-  color: #d9cab0;
+  border: 1px solid #ead6a7;
+  border-radius: 6px;
+  background: #fff9eb;
+  color: #6d5214;
   font-size: 12px;
 }
 
@@ -411,15 +401,14 @@ select {
 
 .error-box {
   padding: 12px 14px;
-  border: 1px solid rgba(255, 142, 142, 0.25);
-  border-radius: 11px;
-  background: rgba(255, 142, 142, 0.08);
-  color: #ffc1c1;
+  border: 1px solid #efc4c7;
+  border-radius: 6px;
+  background: #fff3f3;
+  color: #8e1f27;
   font-size: 13px;
 }
 
-.btn,
-button.btn {
+.btn {
   min-height: 42px;
   display: inline-flex;
   align-items: center;
@@ -427,8 +416,8 @@ button.btn {
   gap: 8px;
   padding: 9px 15px;
   border: 1px solid var(--line-strong);
-  border-radius: 11px;
-  background: var(--surface-2);
+  border-radius: 6px;
+  background: #ffffff;
   color: var(--text);
   cursor: pointer;
   text-decoration: none;
@@ -442,9 +431,9 @@ button.btn {
 }
 
 .btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: rgba(126, 226, 184, 0.46);
-  background: var(--surface-3);
+  transform: none;
+  border-color: #9aa8b6;
+  background: #f3f5f7;
 }
 
 .btn:active:not(:disabled) {
@@ -457,21 +446,21 @@ button.btn {
 }
 
 .btn-primary {
-  border-color: transparent;
-  background: linear-gradient(145deg, var(--green), var(--green-strong));
-  color: #052016;
-  box-shadow: 0 10px 30px rgba(55, 200, 137, 0.15);
+  border-color: var(--green-strong);
+  background: var(--green-strong);
+  color: #ffffff;
+  box-shadow: none;
 }
 
 .btn-primary:hover:not(:disabled) {
-  border-color: transparent;
-  background: linear-gradient(145deg, #9aebc9, #45d699);
+  border-color: var(--green-deep);
+  background: var(--green-deep);
 }
 
 .btn-danger {
-  border-color: rgba(255, 142, 142, 0.24);
-  background: rgba(255, 142, 142, 0.08);
-  color: #ffc0c0;
+  border-color: #e4b5b9;
+  background: #fff3f3;
+  color: var(--red);
 }
 
 .btn-ghost {
@@ -512,8 +501,8 @@ button.btn {
   gap: 20px;
   padding: 0 26px;
   border-bottom: 1px solid var(--line);
-  background: rgba(7, 17, 14, 0.82);
-  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
 }
 
 .topbar-title {
@@ -525,7 +514,7 @@ button.btn {
   margin: 0;
   font-size: 18px;
   font-weight: 720;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -563,7 +552,7 @@ button.btn {
 
 .sync-state.is-clean .sync-dot {
   background: var(--green);
-  box-shadow: 0 0 12px rgba(126, 226, 184, 0.6);
+  box-shadow: none;
 }
 
 .sync-state.is-dirty .sync-dot {
@@ -584,9 +573,7 @@ button.btn {
   flex-direction: column;
   padding: 18px 14px;
   border-right: 1px solid var(--line);
-  background:
-    radial-gradient(circle at 20% 0%, rgba(55, 200, 137, 0.09), transparent 16rem),
-    rgba(7, 17, 14, 0.96);
+  background: #f1f3f5;
 }
 
 .brand {
@@ -605,13 +592,13 @@ button.btn {
 
 .brand-copy strong {
   display: block;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .brand-copy span {
   color: var(--muted);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -633,7 +620,7 @@ button.btn {
   gap: 11px;
   padding: 9px 11px;
   border: 1px solid transparent;
-  border-radius: 11px;
+  border-radius: 6px;
   background: transparent;
   color: var(--text-soft);
   cursor: pointer;
@@ -642,15 +629,16 @@ button.btn {
 
 .nav-button:hover,
 .flow-button:hover {
-  background: rgba(126, 226, 184, 0.06);
+  background: #e7eaee;
   color: var(--text);
 }
 
 .nav-button.is-active,
 .flow-button.is-active {
-  border-color: rgba(126, 226, 184, 0.15);
-  background: rgba(126, 226, 184, 0.1);
-  color: var(--mint);
+  border-color: #c9ddd4;
+  border-left-color: var(--green);
+  background: #e7f1ec;
+  color: var(--green-strong);
 }
 
 .nav-icon {
@@ -678,7 +666,7 @@ button.btn {
   color: var(--muted);
   font-size: 10px;
   font-weight: 750;
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -752,8 +740,8 @@ button.btn {
 
 .page-head h2 {
   margin: 0;
-  font-size: clamp(25px, 3vw, 36px);
-  letter-spacing: -0.045em;
+  font-size: 30px;
+  letter-spacing: 0;
 }
 
 .page-head p {
@@ -774,23 +762,23 @@ button.btn {
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: linear-gradient(145deg, rgba(18, 37, 30, 0.8), rgba(10, 23, 18, 0.82));
+  background: #ffffff;
 }
 
 .metric-label {
   color: var(--muted);
   font-size: 11px;
   font-weight: 650;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .metric-value {
   display: block;
   overflow: hidden;
   margin-top: 7px;
-  font-size: clamp(20px, 2.5vw, 30px);
+  font-size: 26px;
   font-weight: 720;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -806,8 +794,8 @@ button.btn {
   padding: 20px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  background: rgba(10, 23, 18, 0.76);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  box-shadow: none;
 }
 
 .panel + .panel {
@@ -858,11 +846,12 @@ button.btn {
   justify-content: center;
   min-height: 78px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 6px;
+  background: #f8fafb;
   color: var(--muted);
   font-size: 10px;
   font-weight: 750;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-align: center;
   text-transform: uppercase;
 }
@@ -887,8 +876,8 @@ button.btn {
   padding: 11px;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(14, 29, 23, 0.9);
+  border-radius: 6px;
+  background: #ffffff;
   color: var(--text-soft);
   cursor: pointer;
   text-align: left;
@@ -899,14 +888,14 @@ button.btn {
 }
 
 .stage-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(126, 226, 184, 0.38);
+  transform: none;
+  border-color: #99b9aa;
 }
 
 .stage-card.is-selected {
-  border-color: rgba(126, 226, 184, 0.68);
-  background: linear-gradient(145deg, rgba(27, 141, 98, 0.25), rgba(14, 29, 23, 0.9));
-  box-shadow: 0 0 0 2px rgba(126, 226, 184, 0.07);
+  border-color: var(--green);
+  background: #edf6f1;
+  box-shadow: 0 0 0 2px rgba(31, 122, 85, 0.1);
 }
 
 .stage-card.is-current::after {
@@ -918,28 +907,29 @@ button.btn {
   height: 7px;
   border-radius: 50%;
   background: var(--green);
-  box-shadow: 0 0 12px rgba(126, 226, 184, 0.7);
+  box-shadow: none;
 }
 
 .stage-card.status-done {
-  border-color: rgba(126, 226, 184, 0.22);
-  background: rgba(27, 91, 67, 0.32);
+  border-color: #b9d7c9;
+  background: #f0f7f3;
 }
 
 .stage-card.status-blocked {
-  border-color: rgba(255, 142, 142, 0.32);
-  background: rgba(100, 32, 36, 0.25);
+  border-color: #e6bfc2;
+  background: #fff4f4;
 }
 
 .stage-card.status-review {
-  border-color: rgba(243, 201, 120, 0.28);
+  border-color: #e5c980;
+  background: #fffaec;
 }
 
 .stage-number {
   color: var(--muted);
   font-size: 9px;
   font-weight: 750;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 
 .stage-name {
@@ -968,29 +958,29 @@ button.btn {
   overflow: hidden;
   border: 0;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.06);
+  background: #e4e8ed;
 }
 
 .progress-track::-webkit-progress-bar {
   border-radius: inherit;
-  background: rgba(255, 255, 255, 0.06);
+  background: #e4e8ed;
 }
 
 .progress-track::-webkit-progress-value {
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--green-deep), var(--green));
+  background: var(--green);
 }
 
 .progress-track::-moz-progress-bar {
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--green-deep), var(--green));
+  background: var(--green);
 }
 
 .progress-bar {
   width: var(--progress, 0%);
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--green-deep), var(--green));
+  background: var(--green);
   transition: width 300ms ease;
 }
 
@@ -1010,7 +1000,7 @@ button.btn {
 .stage-focus-title h3 {
   margin: 0;
   font-size: 20px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 
 .stage-focus-title p {
@@ -1030,7 +1020,7 @@ button.btn {
   padding: 3px 8px;
   border: 1px solid var(--line);
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.035);
+  background: #f2f4f6;
   color: var(--text-soft);
   font-size: 10px;
   font-weight: 680;
@@ -1039,30 +1029,30 @@ button.btn {
 
 .status-pill.is-done,
 .status-pill.is-success {
-  border-color: rgba(126, 226, 184, 0.25);
-  background: rgba(126, 226, 184, 0.08);
-  color: var(--green);
+  border-color: #b9d7c9;
+  background: #edf6f1;
+  color: var(--green-strong);
 }
 
 .status-pill.is-blocked,
 .priority-pill.is-critical {
-  border-color: rgba(255, 142, 142, 0.24);
-  background: rgba(255, 142, 142, 0.08);
+  border-color: #e6bfc2;
+  background: #fff2f2;
   color: var(--red);
 }
 
 .status-pill.is-review,
 .priority-pill.is-high {
-  border-color: rgba(243, 201, 120, 0.24);
-  background: rgba(243, 201, 120, 0.08);
+  border-color: #e4c777;
+  background: #fff8e6;
   color: var(--amber);
 }
 
 .stage-description {
   margin: 0 0 18px;
   padding: 13px 14px;
-  border-left: 2px solid rgba(126, 226, 184, 0.4);
-  background: rgba(126, 226, 184, 0.04);
+  border-left: 2px solid #7aab93;
+  background: #f3f8f5;
   color: var(--text-soft);
   font-size: 12px;
 }
@@ -1082,7 +1072,7 @@ button.btn {
   padding: 9px 10px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(4, 12, 9, 0.32);
+  background: #f8fafb;
   color: var(--text-soft);
   font-size: 12px;
 }
@@ -1128,11 +1118,11 @@ button.btn {
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: rgba(13, 27, 22, 0.82);
+  background: #ffffff;
 }
 
 .record-card:hover {
-  border-color: rgba(126, 226, 184, 0.25);
+  border-color: #a9bbb2;
 }
 
 .record-head {
@@ -1150,7 +1140,7 @@ button.btn {
   margin: 7px 0 0;
   font-size: 15px;
   line-height: 1.35;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
 }
 
 .record-meta {
@@ -1202,14 +1192,14 @@ button.btn {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(4, 12, 9, 0.45);
+  background: #f8fafb;
 }
 
 .attachment-card img {
   width: 100%;
   aspect-ratio: 16 / 10;
   object-fit: cover;
-  background: #020605;
+  background: #eef1f4;
 }
 
 .attachment-card a,
@@ -1251,7 +1241,7 @@ button.btn {
   padding: 20px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: rgba(13, 27, 22, 0.76);
+  background: #ffffff;
 }
 
 .backup-card h3 {
@@ -1282,7 +1272,7 @@ button.btn {
   display: block;
   color: var(--muted);
   font-size: 9px;
-  letter-spacing: 0.07em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -1302,8 +1292,8 @@ button.btn {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(0, 7, 5, 0.76);
-  backdrop-filter: blur(9px);
+  background: rgba(23, 32, 42, 0.48);
+  backdrop-filter: blur(3px);
   animation: fade-in 160ms ease both;
 }
 
@@ -1314,7 +1304,7 @@ button.btn {
   padding: 22px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-xl);
-  background: #0c1d17;
+  background: #ffffff;
   box-shadow: var(--shadow);
   animation: modal-in 180ms ease both;
 }
@@ -1343,7 +1333,7 @@ button.btn {
 .modal-head h2 {
   margin: 0;
   font-size: 21px;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
 }
 
 .modal-head p {
@@ -1366,8 +1356,8 @@ button.btn {
   place-items: center;
   padding: 0;
   border: 1px solid var(--line);
-  border-radius: 11px;
-  background: rgba(255, 255, 255, 0.025);
+  border-radius: 6px;
+  background: #ffffff;
   color: var(--text-soft);
   cursor: pointer;
 }
@@ -1386,8 +1376,8 @@ button.btn {
 .toast {
   padding: 13px 15px;
   border: 1px solid var(--line-strong);
-  border-radius: 12px;
-  background: rgba(15, 31, 25, 0.97);
+  border-radius: 8px;
+  background: #ffffff;
   color: var(--text-soft);
   box-shadow: var(--shadow);
   font-size: 12px;
@@ -1395,12 +1385,12 @@ button.btn {
 }
 
 .toast.is-success {
-  border-color: rgba(126, 226, 184, 0.35);
+  border-color: #99c4b0;
 }
 
 .toast.is-error {
-  border-color: rgba(255, 142, 142, 0.35);
-  color: #ffc5c5;
+  border-color: #dc9fa4;
+  color: var(--red);
 }
 
 @keyframes toast-in {
@@ -1416,7 +1406,7 @@ button.btn {
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(2, 8, 6, 0.45);
+  background: rgba(23, 32, 42, 0.3);
   backdrop-filter: blur(2px);
 }
 
@@ -1435,7 +1425,7 @@ button.btn {
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(126, 226, 184, 0.18);
+  border: 2px solid #cbded5;
   border-top-color: var(--green);
   border-radius: 50%;
   animation: spin 700ms linear infinite;
@@ -1448,8 +1438,8 @@ button.btn {
 }
 
 .danger-zone {
-  border-color: rgba(255, 142, 142, 0.2);
-  background: rgba(255, 142, 142, 0.035);
+  border-color: #edc8cb;
+  background: #fff7f7;
 }
 
 .sr-only {
@@ -1481,8 +1471,8 @@ button.btn {
 
 .brand-lockup h1 {
   margin: 0;
-  font-size: clamp(27px, 3vw, 38px);
-  letter-spacing: -0.045em;
+  font-size: 32px;
+  letter-spacing: 0;
 }
 
 .brand-lockup.compact {
@@ -1569,28 +1559,28 @@ button.btn {
 }
 
 .btn-secondary {
-  border-color: rgba(126, 226, 184, 0.28);
-  color: var(--mint);
+  border-color: #a9cbbb;
+  color: var(--green-strong);
 }
 
 .notice {
   padding: 12px 14px;
   border: 1px solid var(--line-strong);
-  border-radius: 11px;
+  border-radius: 6px;
   color: var(--text-soft);
   font-size: 12px;
 }
 
 .notice-danger {
-  border-color: rgba(255, 142, 142, 0.3);
-  background: rgba(255, 142, 142, 0.08);
-  color: #ffc5c5;
+  border-color: #e2afb4;
+  background: #fff3f3;
+  color: #8e1f27;
 }
 
 .notice-warning {
-  border-color: rgba(243, 201, 120, 0.28);
-  background: rgba(243, 201, 120, 0.07);
-  color: #e9d2a7;
+  border-color: #e3c779;
+  background: #fff9e9;
+  color: #6d5214;
 }
 
 .sidebar-heading {
@@ -1627,7 +1617,7 @@ button.btn {
   gap: 8px;
   padding: 10px;
   border: 1px solid transparent;
-  border-radius: 11px;
+  border-radius: 6px;
   background: transparent;
   color: var(--text-soft);
   cursor: pointer;
@@ -1635,13 +1625,14 @@ button.btn {
 }
 
 .flow-row:hover {
-  background: rgba(126, 226, 184, 0.05);
+  background: #e7eaee;
 }
 
 .flow-row.is-active {
-  border-color: rgba(126, 226, 184, 0.2);
-  background: rgba(126, 226, 184, 0.09);
-  color: var(--mint);
+  border-color: #c9ddd4;
+  border-left-color: var(--green);
+  background: #e7f1ec;
+  color: var(--green-strong);
 }
 
 .flow-row-main {
@@ -1710,7 +1701,7 @@ button.btn {
 
 .sync-dot.is-synced {
   background: var(--green);
-  box-shadow: 0 0 12px rgba(126, 226, 184, 0.62);
+  box-shadow: none;
 }
 
 .sync-dot.is-dirty {
@@ -1740,9 +1731,9 @@ button.btn {
 .run-title h1 {
   overflow-wrap: anywhere;
   margin: 0;
-  font-size: clamp(27px, 3.5vw, 42px);
+  font-size: 34px;
   line-height: 1.05;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
 }
 
 .run-title > p:last-child {
@@ -1784,7 +1775,7 @@ button.btn {
 .panel-heading h2 {
   margin: 0;
   font-size: 21px;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 
 .panel-heading-actions {
@@ -1804,14 +1795,14 @@ button.btn {
   color: var(--muted);
   font-size: 10px;
   font-weight: 680;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .metric-card > strong {
   display: block;
   margin: 5px 0;
   font-size: 28px;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
 }
 
 .metric-card > strong small {
@@ -1829,7 +1820,7 @@ button.btn {
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--green-deep), var(--green));
+  background: var(--green);
 }
 
 .flow-mainline {
@@ -1848,8 +1839,8 @@ button.btn {
   min-width: 0;
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 13px;
-  background: rgba(4, 12, 9, 0.28);
+  border-radius: 8px;
+  background: #f8fafb;
 }
 
 .flow-lane > header {
@@ -1864,7 +1855,7 @@ button.btn {
   color: var(--muted);
   font-size: 9px;
   font-weight: 750;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 
 .flow-lane > header strong {
@@ -1923,8 +1914,8 @@ button.btn {
   min-width: 20px;
   padding: 2px 5px;
   border-radius: 99px;
-  background: rgba(126, 226, 184, 0.1);
-  color: var(--green);
+  background: #e4f0ea;
+  color: var(--green-strong);
   font-size: 8px;
   font-weight: 750;
   text-align: center;
@@ -1955,7 +1946,7 @@ button.btn {
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(4, 12, 9, 0.32);
+  background: #f8fafb;
   color: var(--text-soft);
   cursor: pointer;
   font-size: 11px;
@@ -2011,7 +2002,8 @@ button.btn {
   padding: 4px 8px;
   border: 1px solid var(--line);
   border-radius: 99px;
-  color: var(--green);
+  background: #edf6f1;
+  color: var(--green-strong);
   font-size: 10px;
   font-weight: 700;
 }
@@ -2047,7 +2039,7 @@ button.btn {
 .tag-list > span {
   padding: 3px 7px;
   border-radius: 99px;
-  background: rgba(126, 226, 184, 0.06);
+  background: #f0f3f5;
   color: var(--muted);
   font-size: 9px;
 }
@@ -2066,7 +2058,7 @@ button.btn {
 
 .attachment-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 7px;
   margin-top: 10px;
 }
@@ -2080,7 +2072,7 @@ button.btn {
   padding: 7px;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: rgba(4, 12, 9, 0.36);
+  background: #f8fafb;
 }
 
 .attachment-chip img,
@@ -2091,7 +2083,7 @@ button.btn {
   place-items: center;
   border-radius: 7px;
   object-fit: cover;
-  background: rgba(126, 226, 184, 0.06);
+  background: #edf2ef;
 }
 
 .attachment-name {
@@ -2149,8 +2141,8 @@ button.btn {
   padding: 0;
   border: 0;
   border-radius: 0;
-  background: rgba(0, 7, 5, 0.76);
-  backdrop-filter: blur(9px);
+  background: rgba(23, 32, 42, 0.48);
+  backdrop-filter: blur(3px);
 }
 
 .modal-card {
@@ -2162,7 +2154,7 @@ button.btn {
   padding: 22px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-xl);
-  background: #0c1d17;
+  background: #ffffff;
   box-shadow: var(--shadow);
   animation: modal-in 180ms ease both;
 }
@@ -2206,16 +2198,16 @@ button.btn {
   gap: 10px;
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 11px;
-  background: rgba(4, 12, 9, 0.3);
+  border-radius: 6px;
+  background: #ffffff;
   color: var(--text);
   cursor: pointer;
   text-align: left;
 }
 
 .action-row:hover {
-  border-color: rgba(126, 226, 184, 0.3);
-  background: rgba(126, 226, 184, 0.05);
+  border-color: #a9bbb2;
+  background: #f4f7f5;
 }
 
 .action-row > span {
@@ -2236,7 +2228,7 @@ button.btn {
 }
 
 .action-row.danger {
-  color: #ffc5c5;
+  color: var(--red);
 }
 
 .action-row.danger > span {
@@ -2263,9 +2255,9 @@ button.btn {
   align-items: center;
   gap: 12px;
   padding: 13px;
-  border: 1px dashed rgba(126, 226, 184, 0.34);
+  border: 1px dashed #8ebaa5;
   border-radius: 8px;
-  background: rgba(126, 226, 184, 0.035);
+  background: #f5faf7;
   transition:
     border-color 160ms ease,
     background 160ms ease,
@@ -2274,9 +2266,9 @@ button.btn {
 
 .attachment-paste-zone:hover,
 .attachment-paste-zone:focus {
-  border-color: rgba(126, 226, 184, 0.72);
-  background: rgba(126, 226, 184, 0.07);
-  box-shadow: 0 0 0 3px rgba(126, 226, 184, 0.08);
+  border-color: var(--green);
+  background: #edf6f1;
+  box-shadow: 0 0 0 3px rgba(31, 122, 85, 0.1);
 }
 
 .attachment-paste-icon {
@@ -2284,10 +2276,10 @@ button.btn {
   height: 40px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(126, 226, 184, 0.24);
+  border: 1px solid #b9d7c9;
   border-radius: 8px;
-  background: rgba(126, 226, 184, 0.08);
-  color: var(--green);
+  background: #e8f3ed;
+  color: var(--green-strong);
   font-size: 20px;
 }
 
@@ -2315,7 +2307,7 @@ button.btn {
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(4, 12, 9, 0.3);
+  background: #f8fafb;
 }
 
 .pending-attachment-head {
@@ -2342,12 +2334,12 @@ button.btn {
 }
 
 .toast-success {
-  border-color: rgba(126, 226, 184, 0.35);
+  border-color: #99c4b0;
 }
 
 .toast-error {
-  border-color: rgba(255, 142, 142, 0.35);
-  color: #ffc5c5;
+  border-color: #dc9fa4;
+  color: var(--red);
 }
 
 .workspace-nav {
@@ -2357,8 +2349,8 @@ button.btn {
   margin: 0 0 14px;
   padding: 6px;
   border: 1px solid var(--line);
-  border-radius: 10px;
-  background: rgba(4, 12, 9, 0.42);
+  border-radius: 8px;
+  background: #e8ecef;
 }
 
 .workspace-nav-button {
@@ -2370,7 +2362,7 @@ button.btn {
   gap: 7px;
   padding: 7px 9px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 5px;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
@@ -2385,14 +2377,14 @@ button.btn {
 }
 
 .workspace-nav-button:hover {
-  background: rgba(126, 226, 184, 0.055);
+  background: rgba(255, 255, 255, 0.72);
   color: var(--text-soft);
 }
 
 .workspace-nav-button.is-active {
-  border-color: rgba(126, 226, 184, 0.2);
-  background: rgba(126, 226, 184, 0.1);
-  color: var(--mint);
+  border-color: #cbd3dc;
+  background: #ffffff;
+  color: var(--green-strong);
 }
 
 .workspace-nav-button:focus-visible {
@@ -2411,15 +2403,15 @@ button.btn {
   display: grid;
   place-items: center;
   border-radius: 6px;
-  background: rgba(126, 226, 184, 0.06);
-  color: var(--green);
+  background: #dde9e3;
+  color: var(--green-strong);
   font-size: 14px;
   line-height: 1;
 }
 
 .workspace-nav-button.is-active .workspace-nav-icon {
-  background: rgba(126, 226, 184, 0.13);
-  color: var(--mint);
+  background: #dcece4;
+  color: var(--green-strong);
 }
 
 .knowledge-view {
@@ -2508,8 +2500,8 @@ button.btn {
   min-height: 48px;
   padding: 11px 50px 11px 42px;
   border-color: var(--line-strong);
-  border-radius: 10px;
-  background: rgba(4, 12, 9, 0.76);
+  border-radius: 6px;
+  background: #ffffff;
 }
 
 .knowledge-search-icon {
@@ -2562,7 +2554,7 @@ button.btn {
   flex-direction: column;
   padding: 16px 18px;
   border-radius: 8px;
-  background: rgba(13, 27, 22, 0.72);
+  background: #ffffff;
 }
 
 .knowledge-grid .record-card > footer {
@@ -2682,7 +2674,7 @@ button.btn {
     height: 42px;
     border: 1px solid var(--line);
     border-radius: 11px;
-    background: rgba(255, 255, 255, 0.035);
+    background: #ffffff;
   }
 
   .topbar-title {
@@ -2710,7 +2702,7 @@ button.btn {
     position: fixed;
     z-index: 25;
     inset: 0;
-    background: rgba(0, 6, 4, 0.66);
+    background: rgba(23, 32, 42, 0.46);
   }
 
   .main {
@@ -2971,7 +2963,7 @@ button.btn {
     position: sticky;
     bottom: 0;
     padding-top: 12px;
-    background: linear-gradient(transparent, #0c1d17 22%);
+    background: #ffffff;
   }
 }
 
@@ -2983,6 +2975,383 @@ button.btn {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Light workspace refinements */
+
+::selection {
+  background: #cfe5da;
+  color: var(--text);
+}
+
+.field > span,
+.field > label,
+.field-label {
+  letter-spacing: 0;
+}
+
+.record-quick-action,
+.record-card-actions {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.record-quick-action > .btn:first-child {
+  min-width: 0;
+  flex: 1;
+}
+
+.record-card-actions .btn-icon,
+.record-quick-action .btn-icon,
+.attachment-download {
+  width: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  height: 34px;
+}
+
+.attachment-chip {
+  grid-template-columns: 44px minmax(0, 1fr) auto auto;
+  grid-template-rows: auto auto;
+  min-height: 58px;
+}
+
+.attachment-thumb,
+.attachment-icon {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.attachment-thumb {
+  width: 72px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #eef1f4;
+  color: inherit;
+  cursor: zoom-in;
+}
+
+.attachment-thumb:hover {
+  border-color: #8eaa9d;
+  box-shadow: 0 0 0 2px rgba(31, 122, 85, 0.1);
+}
+
+.attachment-thumb img,
+.attachment-chip .attachment-thumb img {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.attachment-name {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+  color: var(--text-soft);
+}
+
+.attachment-name:hover {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.attachment-chip > small {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+}
+
+.attachment-download {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  align-self: center;
+}
+
+.attachment-chip > .btn-danger {
+  grid-column: 4;
+  grid-row: 1 / 3;
+  align-self: center;
+}
+
+.attachment-chip:has(.attachment-thumb) {
+  grid-template-columns: 72px minmax(0, 1fr) auto auto;
+  min-height: 70px;
+}
+
+.attachment-chip:not(:has(.attachment-thumb)) {
+  min-height: 50px;
+}
+
+body.is-previewing {
+  overflow: hidden;
+}
+
+.attachment-preview-dialog {
+  position: fixed;
+  z-index: 220;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 24px;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.attachment-preview-dialog[open] {
+  display: grid;
+  place-items: center;
+}
+
+.attachment-preview-dialog::backdrop {
+  background: rgba(23, 32, 42, 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.attachment-preview-shell {
+  width: min(1120px, 100%);
+  height: min(900px, calc(100dvh - 48px));
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgba(20, 30, 40, 0.24);
+}
+
+.attachment-preview-header {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.attachment-preview-header > div {
+  min-width: 0;
+}
+
+.attachment-preview-header .eyebrow {
+  margin-bottom: 3px;
+  font-size: 10px;
+}
+
+.attachment-preview-header h2 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-close {
+  flex: 0 0 auto;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.attachment-preview-figure {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  margin: 0;
+  overflow: hidden;
+  background: #eef1f4;
+}
+
+.attachment-preview-image {
+  align-self: center;
+  justify-self: center;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.attachment-preview-meta {
+  min-width: 0;
+  padding: 9px 14px;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment-preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  background: #ffffff;
+}
+
+@media (max-width: 860px) {
+  .mobile-menu {
+    border-radius: 6px;
+    background: #ffffff;
+  }
+
+  .sidebar-scrim {
+    background: rgba(23, 32, 42, 0.46);
+  }
+
+  .attachment-preview-dialog {
+    padding: 16px;
+  }
+
+  .attachment-preview-shell {
+    height: calc(100dvh - 32px);
+  }
+}
+
+@media (max-width: 590px) {
+  .lock-title {
+    font-size: 40px;
+  }
+
+  .connect-card {
+    border-radius: 8px;
+  }
+
+  .panel-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .record-quick-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+  }
+
+  .record-quick-action {
+    width: 100%;
+  }
+
+  .record-card > header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .record-card > header .record-kind {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .record-card > header .record-meta {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .record-card-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .attachment-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .modal-card {
+    border-radius: 10px 10px 0 0;
+  }
+
+  .modal-actions {
+    background: #ffffff;
+  }
+
+  .attachment-preview-dialog {
+    padding: 0;
+  }
+
+  .attachment-preview-shell {
+    width: 100%;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .attachment-preview-header {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .attachment-preview-header h2 {
+    font-size: 16px;
+  }
+
+  .attachment-preview-meta {
+    padding-inline: 12px;
+  }
+
+  .attachment-preview-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .attachment-preview-actions .btn {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .main {
+    padding-inline: 10px;
+  }
+
+  .topbar-title h1 {
+    font-size: 16px;
+  }
+
+  .page-head h2,
+  .run-title h1 {
+    font-size: 27px;
+  }
+
+  .panel {
+    padding: 15px;
+  }
+
+  .record-quick-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .quick-create {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .attachment-chip {
+    grid-template-columns: 44px minmax(0, 1fr) auto auto;
   }
 }
 </style>
@@ -3878,6 +4247,8 @@ button.btn {
     toast: null,
     toastTimer: null,
   };
+  let previewReturnFocus = null;
+  let previewDownload = null;
 
   function hasTrustedToken() {
     try {
@@ -3896,6 +4267,12 @@ button.btn {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
+  }
+
+  function isPreviewableImage(dataUrl) {
+    return /^data:image\/(?:png|jpeg|gif|webp);base64,[a-z0-9+/=\s]+$/i.test(
+      String(dataUrl || ""),
+    );
   }
 
   function multiline(value) {
@@ -4000,6 +4377,129 @@ button.btn {
           state.toast.message,
         )}</div>`
       : "";
+  }
+
+  function ensureAttachmentPreviewDialog() {
+    let dialog = document.getElementById("attachment-preview-dialog");
+    if (dialog) return dialog;
+
+    dialog = document.createElement("dialog");
+    dialog.id = "attachment-preview-dialog";
+    dialog.className = "attachment-preview-dialog";
+    dialog.setAttribute("aria-labelledby", "attachment-preview-title");
+    dialog.innerHTML = `
+      <section class="attachment-preview-shell">
+        <header class="attachment-preview-header">
+          <div>
+            <p class="eyebrow">IMAGE PREVIEW</p>
+            <h2 id="attachment-preview-title"></h2>
+          </div>
+          <button class="btn btn-icon preview-close" type="button" data-preview-close aria-label="关闭图片查看器" title="关闭">×</button>
+        </header>
+        <figure class="attachment-preview-figure">
+          <img class="attachment-preview-image" alt="" />
+          <figcaption class="attachment-preview-meta"></figcaption>
+        </figure>
+        <footer class="attachment-preview-actions">
+          <button class="btn" type="button" data-preview-download>下载原图</button>
+          <button class="btn btn-primary" type="button" data-preview-close>关闭</button>
+        </footer>
+      </section>
+    `;
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog || event.target.closest("[data-preview-close]")) {
+        closeAttachmentPreview();
+        return;
+      }
+      if (event.target.closest("[data-preview-download]") && previewDownload) {
+        previewDownload();
+      }
+    });
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeAttachmentPreview();
+    });
+    document.body.appendChild(dialog);
+    return dialog;
+  }
+
+  function openAttachmentPreview(attachment, trigger) {
+    if (!attachment || !isPreviewableImage(attachment.dataUrl)) {
+      showToast("这个附件不是可在网页内查看的图片，请使用下载。", "warning");
+      return;
+    }
+    const dialog = ensureAttachmentPreviewDialog();
+    if (typeof dialog.showModal !== "function") {
+      showToast("当前浏览器不支持站内大图查看，请下载附件。", "warning");
+      return;
+    }
+    const name = String(attachment.name || "图片附件");
+    const size = Math.max(1, Math.round(Number(attachment.size || 0) / 1024));
+    const image = dialog.querySelector(".attachment-preview-image");
+    const title = dialog.querySelector("#attachment-preview-title");
+    const meta = dialog.querySelector(".attachment-preview-meta");
+    if (image) {
+      image.src = attachment.dataUrl;
+      image.alt = `图片附件：${name}`;
+    }
+    if (title) title.textContent = name;
+    if (meta) meta.textContent = `${size} KiB · 点击下载可保留原始文件`;
+    previewReturnFocus =
+      trigger instanceof HTMLElement ? trigger : document.activeElement;
+    previewDownload = () => {
+      try {
+        downloadDataUrl(attachment.dataUrl, name);
+      } catch (error) {
+        showToast(errorMessage(error), "danger");
+      }
+    };
+    if (!dialog.open) dialog.showModal();
+    document.body.classList.add("is-previewing");
+    const focusClose = () => {
+      const close = dialog.querySelector("[data-preview-close]");
+      if (close) close.focus();
+    };
+    if (typeof global.requestAnimationFrame === "function") {
+      global.requestAnimationFrame(focusClose);
+    } else {
+      global.setTimeout(focusClose, 0);
+    }
+  }
+
+  function closeAttachmentPreview() {
+    const dialog = document.getElementById("attachment-preview-dialog");
+    if (!dialog || !dialog.open) return;
+    dialog.close();
+    document.body.classList.remove("is-previewing");
+    previewDownload = null;
+    const returnFocus = previewReturnFocus;
+    previewReturnFocus = null;
+    if (returnFocus && returnFocus.isConnected) returnFocus.focus();
+    const image = dialog.querySelector(".attachment-preview-image");
+    global.setTimeout(() => {
+      if (image && !dialog.open) image.removeAttribute("src");
+    }, 0);
+  }
+
+  function previewAttachmentById(id, trigger) {
+    const attachment = state.workspace.attachments.find((item) => item.id === id);
+    if (!attachment) {
+      showToast("没有找到这个附件，可能已被删除。", "warning");
+      return;
+    }
+    openAttachmentPreview(attachment, trigger);
+  }
+
+  function previewPendingAttachmentById(id, trigger) {
+    const modal = recordModalState();
+    const attachment = modal
+      ? (modal.pendingAttachments || []).find((item) => item.id === id)
+      : null;
+    if (!attachment) {
+      showToast("没有找到这张待添加图片。", "warning");
+      return;
+    }
+    openAttachmentPreview(attachment, trigger);
   }
 
   function renderLock() {
@@ -4432,12 +4932,16 @@ button.btn {
       .filter((record) => {
         if (!query) return true;
         const template = Model.stageTemplate(record.stageSlug);
+        const attachmentNames = attachmentsForRecord(record).map(
+          (attachment) => attachment.name,
+        );
         const haystack = [
           record.title,
           record.content,
           record.status,
           record.priority,
           ...(record.tags || []),
+          ...attachmentNames,
           template ? template.name : "",
         ]
           .join("\n")
@@ -4460,26 +4964,40 @@ button.btn {
   }
 
   function renderAttachment(attachment, editable = false) {
-    const isImage = /^data:image\/(?:png|jpeg|gif|webp);base64,/i.test(
-      attachment.dataUrl,
-    );
+    const isImage = isPreviewableImage(attachment.dataUrl);
+    const primaryAction = isImage
+      ? "preview-attachment"
+      : "download-attachment";
+    const primaryTitle = isImage ? "查看大图" : "下载附件";
     return `
       <div class="attachment-chip">
         ${
           isImage
-            ? `<img src="${escapeHtml(
+            ? `<button
+                type="button"
+                class="attachment-thumb"
+                data-action="preview-attachment"
+                data-attachment-id="${escapeHtml(attachment.id)}"
+                aria-label="查看大图：${escapeHtml(attachment.name)}"
+                title="查看大图"
+              ><img src="${escapeHtml(
                 attachment.dataUrl,
-              )}" alt="" loading="lazy" />`
+              )}" alt="" loading="lazy" /></button>`
             : '<span class="attachment-icon" aria-hidden="true">▣</span>'
         }
         <button
           type="button"
           class="attachment-name"
-          data-action="download-attachment"
+          data-action="${primaryAction}"
           data-attachment-id="${escapeHtml(attachment.id)}"
-          title="下载 ${escapeHtml(attachment.name)}"
+          title="${primaryTitle}：${escapeHtml(attachment.name)}"
         >${escapeHtml(attachment.name)}</button>
         <small>${Math.max(1, Math.round(attachment.size / 1024))} KiB</small>
+        <button class="btn btn-icon attachment-download" type="button" data-action="download-attachment" data-attachment-id="${escapeHtml(
+          attachment.id,
+        )}" aria-label="下载附件：${escapeHtml(
+          attachment.name,
+        )}" title="下载附件">⇩</button>
         ${
           editable
             ? `<button class="btn btn-icon btn-danger" type="button" data-action="delete-attachment" data-attachment-id="${escapeHtml(
@@ -4509,9 +5027,14 @@ button.btn {
               record.priority,
             )}">${priorityLabel(record.priority)}优先级</span>
           </div>
-          <button class="btn btn-icon" type="button" data-action="edit-record" data-record-id="${escapeHtml(
-            record.id,
-          )}" aria-label="编辑记录" title="编辑记录">✎</button>
+          <div class="record-card-actions">
+            <button class="btn btn-icon" type="button" data-action="add-record-image" data-record-id="${escapeHtml(
+              record.id,
+            )}" aria-label="为这条记录添加图片" title="添加图片">▣</button>
+            <button class="btn btn-icon" type="button" data-action="edit-record" data-record-id="${escapeHtml(
+              record.id,
+            )}" aria-label="编辑记录" title="编辑记录">✎</button>
+          </div>
         </header>
         <h3>${escapeHtml(record.title)}</h3>
         ${
@@ -4583,12 +5106,19 @@ button.btn {
             ${Object.entries(Model.RECORD_TYPES)
               .map(
                 ([type, meta]) => `
-                  <button class="btn btn-small" type="button" data-action="new-record" data-record-type="${escapeHtml(
-                    type,
-                  )}">
-                    <span aria-hidden="true">${escapeHtml(meta.icon)}</span>
-                    ${escapeHtml(meta.label)}
-                  </button>
+                  <div class="record-quick-action">
+                    <button class="btn btn-small" type="button" data-action="new-record" data-record-type="${escapeHtml(
+                      type,
+                    )}">
+                      <span aria-hidden="true">${escapeHtml(meta.icon)}</span>
+                      ${escapeHtml(meta.label)}
+                    </button>
+                    <button class="btn btn-small btn-icon" type="button" data-action="new-record-with-image" data-record-type="${escapeHtml(
+                      type,
+                    )}" aria-label="用图片添加${escapeHtml(
+                      meta.label,
+                    )}" title="用图片添加${escapeHtml(meta.label)}">▣</button>
+                  </div>
                 `,
               )
               .join("")}
@@ -4601,7 +5131,7 @@ button.btn {
               type="search"
               value="${escapeHtml(state.query)}"
               data-action="search-records"
-              placeholder="搜索标题、内容、标签或阶段…"
+              placeholder="搜索标题、内容、标签、阶段或附件名…"
             />
           </label>
           <label class="field compact-field">
@@ -4859,6 +5389,23 @@ button.btn {
     if (target) target.focus();
   }
 
+  function openRecordWithImage(options) {
+    state.modal = createRecordModal(options);
+    render();
+    focusRecordModal(true);
+    const input = root.querySelector(
+      '[data-form="record"] [name="attachments"]',
+    );
+    if (input) input.click();
+  }
+
+  function recordTypeForGlobalPaste() {
+    if (state.workspaceView === "knowledge") return "knowledge";
+    return Model.RECORD_TYPES[state.recordType]
+      ? state.recordType
+      : "progress";
+  }
+
   function snapshotRecordForm() {
     const form = root.querySelector('[data-form="record"]');
     if (!form) return null;
@@ -4925,6 +5472,7 @@ button.btn {
   }
 
   function renderPendingAttachment(attachment) {
+    const isImage = isPreviewableImage(attachment.dataUrl);
     const optimized =
       attachment.originalSize && attachment.originalSize > attachment.size
         ? `<span class="attachment-optimized">已优化 ${Math.max(
@@ -4937,11 +5485,28 @@ button.btn {
         attachment.id,
       )}">
         ${
-          attachment.mime.startsWith("image/")
-            ? `<img src="${escapeHtml(attachment.dataUrl)}" alt="待添加图片预览" />`
+          isImage
+            ? `<button
+                type="button"
+                class="attachment-thumb"
+                data-action="preview-pending-attachment"
+                data-pending-attachment-id="${escapeHtml(attachment.id)}"
+                aria-label="查看待添加大图：${escapeHtml(attachment.name)}"
+                title="查看大图"
+              ><img src="${escapeHtml(
+                attachment.dataUrl,
+              )}" alt="" /></button>`
             : '<span class="attachment-icon" aria-hidden="true">▤</span>'
         }
-        <span class="attachment-name">${escapeHtml(attachment.name)}</span>
+        ${
+          isImage
+            ? `<button class="attachment-name" type="button" data-action="preview-pending-attachment" data-pending-attachment-id="${escapeHtml(
+                attachment.id,
+              )}" title="查看大图：${escapeHtml(
+                attachment.name,
+              )}">${escapeHtml(attachment.name)}</button>`
+            : `<span class="attachment-name">${escapeHtml(attachment.name)}</span>`
+        }
         ${optimized}
         <button class="btn btn-icon btn-danger" type="button" data-action="remove-pending-attachment" data-pending-attachment-id="${escapeHtml(
           attachment.id,
@@ -5429,24 +5994,31 @@ button.btn {
     global.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  function downloadDataUrl(dataUrl, name) {
+    const match = /^data:([^;,]*)(;base64)?,(.*)$/s.exec(dataUrl);
+    if (!match) throw new Error("附件格式无效。");
+    const mime = match[1] || "application/octet-stream";
+    let bytes;
+    if (match[2]) {
+      const binary = atob(match[3].replace(/\s/g, ""));
+      bytes = new Uint8Array(binary.length);
+      for (let index = 0; index < binary.length; index += 1) {
+        bytes[index] = binary.charCodeAt(index);
+      }
+    } else {
+      bytes = new TextEncoder().encode(decodeURIComponent(match[3]));
+    }
+    downloadBlob(new Blob([bytes], { type: mime }), name);
+  }
+
   function downloadAttachment(id) {
     const attachment = state.workspace.attachments.find((item) => item.id === id);
-    if (!attachment) return;
+    if (!attachment) {
+      showToast("没有找到这个附件，可能已被删除。", "warning");
+      return;
+    }
     try {
-      const match = /^data:([^;,]*)(;base64)?,(.*)$/s.exec(attachment.dataUrl);
-      if (!match) throw new Error("附件格式无效。");
-      const mime = match[1] || "application/octet-stream";
-      let bytes;
-      if (match[2]) {
-        const binary = atob(match[3].replace(/\s/g, ""));
-        bytes = new Uint8Array(binary.length);
-        for (let index = 0; index < binary.length; index += 1) {
-          bytes[index] = binary.charCodeAt(index);
-        }
-      } else {
-        bytes = new TextEncoder().encode(decodeURIComponent(match[3]));
-      }
-      downloadBlob(new Blob([bytes], { type: mime }), attachment.name);
+      downloadDataUrl(attachment.dataUrl, attachment.name);
     } catch (error) {
       showToast(errorMessage(error), "danger");
     }
@@ -5770,9 +6342,8 @@ button.btn {
       !state.modal
     ) {
       event.preventDefault();
-      state.workspaceView = "knowledge";
       state.modal = createRecordModal({
-        recordType: "knowledge",
+        recordType: recordTypeForGlobalPaste(),
         stageSlug: state.selectedStageSlug,
       });
       render();
@@ -5982,14 +6553,19 @@ button.btn {
       });
       render();
       focusRecordModal();
+    } else if (action === "new-record-with-image") {
+      const recordType = Model.RECORD_TYPES[target.dataset.recordType]
+        ? target.dataset.recordType
+        : "progress";
+      openRecordWithImage({
+        recordType,
+        stageSlug: state.selectedStageSlug,
+      });
     } else if (action === "new-knowledge-with-image") {
-      state.modal = createRecordModal({
+      openRecordWithImage({
         recordType: "knowledge",
         stageSlug: state.selectedStageSlug,
       });
-      render();
-      focusRecordModal(true);
-      showToast("知识记录已打开，现在按 Ctrl+V 粘贴截图。", "info");
     } else if (action === "clear-knowledge-search") {
       state.knowledgeQuery = "";
       const input = root.querySelector('[data-action="search-knowledge"]');
@@ -6002,11 +6578,17 @@ button.btn {
       state.modal = createRecordModal({ recordId: target.dataset.recordId });
       render();
       focusRecordModal();
+    } else if (action === "add-record-image") {
+      openRecordWithImage({ recordId: target.dataset.recordId });
     } else if (action === "choose-attachments") {
       const input = root.querySelector('[data-form="record"] [name="attachments"]');
       if (input) input.click();
     } else if (action === "remove-pending-attachment") {
       removePendingAttachment(target.dataset.pendingAttachmentId);
+    } else if (action === "preview-pending-attachment") {
+      previewPendingAttachmentById(target.dataset.pendingAttachmentId, target);
+    } else if (action === "preview-attachment") {
+      previewAttachmentById(target.dataset.attachmentId, target);
     } else if (action === "delete-record") {
       deleteRecord(target.dataset.recordId);
     } else if (action === "delete-attachment") {
@@ -6147,6 +6729,12 @@ button.btn {
   root.addEventListener("submit", handleSubmit);
   document.addEventListener("paste", handlePaste);
   document.addEventListener("keydown", (event) => {
+    const previewDialog = document.getElementById("attachment-preview-dialog");
+    if (event.key === "Escape" && previewDialog && previewDialog.open) {
+      event.preventDefault();
+      closeAttachmentPreview();
+      return;
+    }
     if (event.key === "Escape" && state.modal) {
       closeModal();
       return;
