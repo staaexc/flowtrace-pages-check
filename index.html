@@ -8,7 +8,7 @@
     <meta name="referrer" content="no-referrer" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'sha256-0x/xlHjuXMwGKJEvk+nUKSQ7UVVW5f5mHztmjXAd1zc='; style-src 'sha256-L3o4V1Xv1x/Ny/zGoQ3TUkdgb0n2uXOO7f5RUv0Bo3M='; connect-src https://api.github.com; img-src data:; font-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';"
+      content="default-src 'none'; script-src 'sha256-yzc4P2QRQ5baymXLu/ZlGWn3QmcAV9pc3jEduXREuRY='; style-src 'sha256-RI6n7rsVLQh16jXrKZ7s37qDHfgJa7mK6kSXaj0/yDY='; connect-src https://api.github.com; img-src data:; font-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';"
     />
     <meta
       name="description"
@@ -3011,6 +3011,675 @@ select {
     bottom: 0;
     padding-top: 12px;
     background: #ffffff;
+  }
+}
+
+/* Lightweight record workspace */
+
+.workspace-nav {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.record-metrics .metric-stage-name {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(20px, 2vw, 28px);
+}
+
+.metric-link {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.metric-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.stage-card.gate2-card.record-stage-card {
+  min-height: 116px;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: stretch;
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: none;
+}
+
+.stage-card.gate2-card.record-stage-card.has-failure,
+.stage-card.gate2-card.record-stage-card.needs-attention,
+.stage-card.gate2-card.record-stage-card.has-passed {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.97);
+}
+
+.stage-card.gate2-card.record-stage-card.is-selected {
+  border-color: #8d9aa8;
+  background: #f7f9fb;
+  box-shadow: inset 3px 0 0 #8d9aa8;
+}
+
+.stage-card.gate2-card.record-stage-card.is-current,
+.stage-card.gate2-card.record-stage-card.is-current.has-failure,
+.stage-card.gate2-card.record-stage-card.is-current.needs-attention {
+  border-color: var(--state-blue);
+  background: var(--state-blue-soft);
+  box-shadow:
+    inset 3px 0 0 var(--state-blue),
+    0 0 0 2px rgba(38, 103, 178, 0.1);
+}
+
+.stage-card.gate2-card.record-stage-card:hover {
+  border-color: #9eaebe;
+  background: #fbfcfd;
+  transform: translateY(-1px);
+}
+
+.stage-card.gate2-card.record-stage-card.is-current:hover,
+.stage-card.gate2-card.record-stage-card.is-current.is-selected:hover {
+  border-color: var(--state-blue);
+  background: var(--state-blue-soft);
+}
+
+.stage-card.gate2-card.record-stage-card.is-selected:not(.is-current):hover {
+  border-color: #7f8d9b;
+  background: #f4f7fa;
+}
+
+.stage-record-summary {
+  grid-column: 1 / -1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.stage-record-latest {
+  min-width: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.stage-compact-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--state-gray);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.stage-status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: var(--state-gray);
+}
+
+.stage-compact-status.is-failure {
+  color: var(--state-red);
+}
+
+.stage-compact-status.is-failure .stage-status-dot {
+  background: var(--state-red);
+  box-shadow: 0 0 0 3px rgba(180, 35, 44, 0.1);
+}
+
+.stage-compact-status.is-attention {
+  color: var(--state-yellow);
+}
+
+.stage-compact-status.is-attention .stage-status-dot {
+  background: #c39816;
+}
+
+.stage-compact-status.is-passed {
+  color: var(--state-green);
+}
+
+.stage-compact-status.is-passed .stage-status-dot {
+  background: var(--state-green);
+}
+
+.record-count-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.stage-record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.lightweight-stage-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 12px;
+}
+
+.advanced-audit {
+  min-width: 0;
+  margin-top: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.advanced-audit > summary {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 14px;
+  color: var(--text-soft);
+  cursor: pointer;
+  list-style: none;
+}
+
+.advanced-audit > summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-audit > summary::after {
+  content: "展开";
+  flex: 0 0 auto;
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.advanced-audit[open] > summary::after {
+  content: "收起";
+}
+
+.advanced-audit > summary:hover {
+  background: #f3f6f8;
+}
+
+.advanced-audit > summary > span:first-child {
+  min-width: 0;
+}
+
+.advanced-audit > summary strong,
+.advanced-audit > summary small {
+  display: block;
+}
+
+.advanced-audit > summary strong {
+  font-size: 13px;
+}
+
+.advanced-audit > summary small {
+  margin-top: 2px;
+  color: #5f6d7c;
+  font-size: 11px;
+}
+
+.advanced-summary-status {
+  color: #5f6d7c;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.advanced-audit-content {
+  min-width: 0;
+  padding: 14px;
+  border-top: 1px solid var(--line);
+  background: #ffffff;
+}
+
+.advanced-audit-content .stage-action-bar {
+  margin-bottom: 14px;
+}
+
+.weekly-view {
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  gap: 16px;
+}
+
+.weekly-hero {
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 6px 0 4px;
+}
+
+.weekly-hero .eyebrow {
+  margin-bottom: 5px;
+}
+
+.weekly-hero h1 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.08;
+}
+
+.weekly-hero p:last-child {
+  max-width: 720px;
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  font-size: 13px;
+}
+
+.weekly-total {
+  flex: 0 0 auto;
+  display: grid;
+  justify-items: end;
+  padding: 10px 0;
+}
+
+.weekly-total strong {
+  color: var(--blue);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.weekly-total span {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.weekly-context {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 4px 14px rgba(23, 32, 42, 0.04);
+}
+
+.weekly-context .field {
+  align-self: stretch;
+}
+
+.weekly-context-item {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.weekly-context-item > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.weekly-context-item > strong,
+.weekly-context-item > small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.weekly-context-item > strong {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.weekly-context-item > small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.weekly-reference-note {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #c8d8e7;
+  border-left: 3px solid var(--blue);
+  border-radius: 8px;
+  background: #f4f8fc;
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.weekly-reference-note strong {
+  flex: 0 0 auto;
+  color: var(--blue);
+}
+
+.weekly-section-grid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.weekly-section {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 5px 18px rgba(23, 32, 42, 0.045);
+}
+
+.weekly-section-summary,
+.weekly-section-next-plan {
+  grid-column: 1 / -1;
+}
+
+.weekly-section-header {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.weekly-section-header > div {
+  min-width: 0;
+}
+
+.weekly-ppt-label {
+  margin: 0 0 4px;
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.weekly-section-header h2 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.weekly-section-header p:last-child {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.weekly-section-count {
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.weekly-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.weekly-record-list {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.weekly-empty {
+  min-width: 0;
+  min-height: 128px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  padding: 18px;
+  border: 1px dashed #cbd3dc;
+  border-radius: 8px;
+  background: #fafbfc;
+  color: var(--muted);
+  text-align: center;
+}
+
+.weekly-empty > span {
+  color: #8795a4;
+  font-size: 24px;
+}
+
+.weekly-empty p,
+.weekly-empty small {
+  max-width: 520px;
+  margin: 0;
+}
+
+.weekly-empty p {
+  color: var(--text-soft);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.weekly-empty small {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.weekly-record-card {
+  box-shadow: none;
+}
+
+.weekly-record-card .attachment-list {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+
+.weekly-record-card .attachment-chip:has(.attachment-thumb) {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(190px, 30vw) auto auto;
+  min-height: 250px;
+}
+
+.weekly-record-card .attachment-thumb {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+  border-radius: 7px;
+}
+
+.weekly-record-card .attachment-name {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: end;
+}
+
+.weekly-record-card .attachment-chip > small {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.weekly-record-card .attachment-download {
+  grid-column: 2;
+  grid-row: 2 / 4;
+}
+
+.weekly-form-context {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.weekly-form-context > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+}
+
+.weekly-form-context span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.weekly-form-context strong {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+@media (max-width: 1024px) {
+  .stage-card.gate2-card.record-stage-card {
+    min-height: 120px;
+  }
+
+  .weekly-context {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weekly-record-card .attachment-chip:has(.attachment-thumb) {
+    grid-template-rows: minmax(170px, 34vw) auto auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .lightweight-stage-fields,
+  .weekly-section-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .weekly-section-summary,
+  .weekly-section-next-plan {
+    grid-column: auto;
+  }
+
+  .weekly-hero {
+    align-items: flex-start;
+  }
+
+  .weekly-total {
+    justify-items: start;
+  }
+
+  .advanced-audit > summary {
+    align-items: flex-start;
+  }
+
+  .advanced-summary-status {
+    max-width: 180px;
+    white-space: normal;
+    text-align: right;
+  }
+}
+
+@media (max-width: 590px) {
+  .stage-card.gate2-card.record-stage-card {
+    min-height: 126px;
+  }
+
+  .stage-record-summary {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .stage-compact-status {
+    justify-self: start;
+  }
+
+  .stage-record-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stage-record-actions .btn {
+    width: 100%;
+  }
+
+  .advanced-audit > summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .advanced-summary-status {
+    grid-column: 1 / -1;
+    max-width: none;
+    text-align: left;
+  }
+
+  .weekly-hero {
+    display: grid;
+    gap: 8px;
+  }
+
+  .weekly-context,
+  .weekly-form-context {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .weekly-reference-note {
+    display: grid;
+  }
+
+  .weekly-section {
+    padding: 13px;
+  }
+
+  .weekly-section-header {
+    display: grid;
+    gap: 8px;
+  }
+
+  .weekly-section-count {
+    justify-self: start;
+  }
+
+  .weekly-section-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weekly-section-actions .btn {
+    width: 100%;
+  }
+
+  .weekly-record-card .attachment-chip:has(.attachment-thumb) {
+    grid-template-rows: minmax(210px, 64vw) auto auto;
   }
 }
 
@@ -11766,6 +12435,70 @@ body.is-previewing {
   const PREVIEW_ZOOM_MIN = 0.25;
   const PREVIEW_ZOOM_MAX = 4;
   const PREVIEW_ZOOM_STEP = 1.25;
+  const WEEKLY_TAG_PREFIX = "weekly:";
+  const WEEK_TAG_PREFIX = "week:";
+  const WEEKLY_SECTIONS = Object.freeze([
+    {
+      id: "summary",
+      label: "本周总结",
+      pptLabel: "AI summary",
+      description: "记录本周出现的问题、原因、处理结果和重要进展。",
+      stageSlug: null,
+      recordType: "progress",
+      imageFirst: false,
+      prompt: "用自然语言写清楚：发生了什么、为什么、怎么处理、现在结果如何。",
+    },
+    {
+      id: "floorplan",
+      label: "Floorplan",
+      pptLabel: "Floorplan",
+      description: "放最新布局截图，并用一句话说明本周调整了什么。",
+      stageSlug: "floorplan",
+      recordType: "progress",
+      imageFirst: true,
+      prompt: "例如：重新设置 skiprouting 后重跑 PR，IP 上方绕线已消失。",
+    },
+    {
+      id: "density",
+      label: "Density Mapping",
+      pptLabel: "Density Mapping · latest stage",
+      description: "放最新阶段密度图；热点、拥塞区域或密度数值按需补充。",
+      stageSlug: "placement",
+      recordType: "report",
+      imageFirst: true,
+      prompt: "说明最新阶段、热点区域或本周观察；没有数值也可以只写结论。",
+    },
+    {
+      id: "route-drc",
+      label: "Route DRC Summary",
+      pptLabel: "Route DRC Summary · latest stage",
+      description: "记录真 DRC 数量、原因和处理办法，并附最新 DRC 图。",
+      stageSlug: "route",
+      recordType: "report",
+      imageFirst: true,
+      prompt: "建议写：True DRC 数量、规则/位置、原因、修复方法和复查结果。",
+    },
+    {
+      id: "sta",
+      label: "STA Summary",
+      pptLabel: "STA summary",
+      description: "放 STA 汇总截图；WNS、TNS、setup/hold、mode/corner 按需填写。",
+      stageSlug: "pt",
+      recordType: "report",
+      imageFirst: true,
+      prompt: "说明 setup/hold 结论；需要时补充 WNS、TNS、违例数、mode 和 corner。",
+    },
+    {
+      id: "next-plan",
+      label: "下周计划",
+      pptLabel: "Next plan · optional",
+      description: "可选：记录下周准备推进的阶段和具体动作。",
+      stageSlug: null,
+      recordType: "action",
+      imageFirst: false,
+      prompt: "写下一步动作、预计完成时间或需要继续确认的事项。",
+    },
+  ]);
 
   if (!root || !Model || !GitHub) {
     if (root) {
@@ -11791,12 +12524,14 @@ body.is-previewing {
     error: "",
     selectedStageSlug: "init",
     workspaceView: "flow",
+    weeklyDate: localDateKey(new Date()),
     query: "",
     knowledgeQuery: "",
     recordType: "all",
     recordScope: "stage",
     showArchived: false,
     sidebarOpen: false,
+    advancedAuditOpen: false,
     lastSyncAt: "",
     modal: null,
     pendingImport: null,
@@ -11855,8 +12590,55 @@ body.is-previewing {
       day: "2-digit",
       ...(withTime
         ? { hour: "2-digit", minute: "2-digit", hour12: false }
-        : { year: "numeric" }),
+      : { year: "numeric" }),
     }).format(date);
+  }
+
+  function localDateKey(value) {
+    const date = value instanceof Date ? value : new Date(value);
+    const safe = Number.isNaN(date.getTime()) ? new Date() : date;
+    const year = safe.getFullYear();
+    const month = String(safe.getMonth() + 1).padStart(2, "0");
+    const day = String(safe.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function weeklySection(sectionId) {
+    return WEEKLY_SECTIONS.find((section) => section.id === sectionId) || null;
+  }
+
+  function weeklySectionIdForRecord(record) {
+    const tag = (record && Array.isArray(record.tags) ? record.tags : []).find(
+      (value) =>
+        typeof value === "string" &&
+        value.startsWith(WEEKLY_TAG_PREFIX) &&
+        weeklySection(value.slice(WEEKLY_TAG_PREFIX.length)),
+    );
+    return tag ? tag.slice(WEEKLY_TAG_PREFIX.length) : "";
+  }
+
+  function weeklyDateForRecord(record) {
+    const tag = (record && Array.isArray(record.tags) ? record.tags : []).find(
+      (value) =>
+        typeof value === "string" &&
+        new RegExp(`^${WEEK_TAG_PREFIX}\\d{4}-\\d{2}-\\d{2}$`).test(value),
+    );
+    return tag ? tag.slice(WEEK_TAG_PREFIX.length) : "";
+  }
+
+  function weeklyTags(sectionId, weekDate, extras = []) {
+    return Array.from(
+      new Set([
+        `${WEEKLY_TAG_PREFIX}${sectionId}`,
+        `${WEEK_TAG_PREFIX}${weekDate}`,
+        ...extras.filter(
+          (tag) =>
+            typeof tag === "string" &&
+            !tag.startsWith(WEEKLY_TAG_PREFIX) &&
+            !tag.startsWith(WEEK_TAG_PREFIX),
+        ),
+      ]),
+    );
   }
 
   function activeRun() {
@@ -12612,7 +13394,17 @@ body.is-previewing {
             aria-current="${state.workspaceView === "flow" ? "page" : "false"}"
           >
             <span class="workspace-nav-icon" aria-hidden="true">⌁</span>
-            <span>Flow 工作台</span>
+            <span>流程记录</span>
+          </button>
+          <button
+            type="button"
+            class="workspace-nav-button ${state.workspaceView === "weekly" ? "is-active" : ""}"
+            data-action="switch-workspace-view"
+            data-view="weekly"
+            aria-current="${state.workspaceView === "weekly" ? "page" : "false"}"
+          >
+            <span class="workspace-nav-icon" aria-hidden="true">▤</span>
+            <span>周报记录</span>
           </button>
           <button
             type="button"
@@ -12718,151 +13510,163 @@ body.is-previewing {
   }
 
   function renderMetrics(run) {
-    const activeStages = Model.STAGE_TEMPLATE.map((template) =>
-      Model.stageState(run, template.slug),
-    ).filter(Boolean);
-    const assessments = activeStages.map((stage) =>
-      deriveAssessment(run, stage),
-    );
-    const acceptedStages = assessments.filter(
-      (assessment) => assessment.accepted,
-    ).length;
-    const gates = activeStages.flatMap((stage) => stage.gates || []);
-    const gatePass = gates.filter(
-      (gate) => currentGateResult(gate)?.status === "pass",
-    ).length;
     const records = state.workspace.records.filter(
       (record) => record.runId === run.id,
     );
-    const openIssues = records.filter(
+    const recordIds = new Set(records.map((record) => record.id));
+    const attachments = state.workspace.attachments.filter(
+      (attachment) =>
+        attachment.recordId && recordIds.has(attachment.recordId),
+    );
+    const images = attachments.filter((attachment) =>
+      isPreviewableImage(attachment.dataUrl),
+    );
+    const weeklyRecords = records.filter(
       (record) =>
-        record.type === "issue" &&
-        !["done", "closed"].includes(record.status),
-    ).length;
-    const openActions = records.filter(
-      (record) =>
-        record.type === "action" &&
-        !["done", "closed"].includes(record.status),
+        weeklySectionIdForRecord(record) &&
+        weeklyDateForRecord(record) === state.weeklyDate,
+    );
+    const currentTemplate =
+      Model.stageTemplate(run.currentStageSlug) || Model.STAGE_TEMPLATE[0];
+    const currentRecordCount = records.filter(
+      (record) => record.stageSlug === currentTemplate.slug,
     ).length;
     return `
-      <section class="metric-grid" aria-label="Flow 概览">
+      <section class="metric-grid record-metrics" aria-label="Flow 记录概览">
         <article class="metric-card">
-          <span>Stage 已接受</span>
-          <strong>${acceptedStages}<small> / ${activeStages.length}</small></strong>
-          <progress class="progress-track is-blue" max="100" value="${
-            activeStages.length
-              ? Math.round((acceptedStages / activeStages.length) * 100)
-              : 0
-          }" aria-label="Stage 已接受 ${acceptedStages} / ${activeStages.length}"></progress>
+          <span>当前阶段</span>
+          <strong class="metric-stage-name">${escapeHtml(currentTemplate.shortName)}</strong>
+          <small>${String(currentTemplate.order).padStart(2, "0")} / ${Model.STAGE_TEMPLATE.length} · ${currentRecordCount} 条阶段记录</small>
         </article>
         <article class="metric-card">
-          <span>Gate 真通过</span>
-          <strong>${gatePass}<small> / ${gates.length}</small></strong>
-          <progress class="progress-track" max="100" value="${
-            gates.length ? Math.round((gatePass / gates.length) * 100) : 0
-          }" aria-label="Gate 真通过 ${
-            gates.length ? Math.round((gatePass / gates.length) * 100) : 0
-          }%"></progress>
+          <span>工作记录</span>
+          <strong>${records.length}</strong>
+          <small>覆盖进展、报告、问题、笔记和行动项</small>
         </article>
         <article class="metric-card">
-          <span>未闭环问题</span>
-          <strong>${openIssues}</strong>
-          <small>${openIssues ? "需要继续跟进" : "当前无待处理问题"}</small>
+          <span>图片证据</span>
+          <strong>${images.length}</strong>
+          <small>共 ${attachments.length} 个附件，可在页面内直接查看图片</small>
         </article>
         <article class="metric-card">
-          <span>行动项</span>
-          <strong>${openActions}</strong>
-          <small>共 ${records.length} 条工作记录</small>
+          <span>${escapeHtml(state.weeklyDate)} 周报</span>
+          <strong>${weeklyRecords.length}<small> 条</small></strong>
+          <button class="metric-link" type="button" data-action="switch-workspace-view" data-view="weekly">打开周报记录</button>
         </article>
       </section>
     `;
   }
 
+  function stageRecords(runId, slug) {
+    return state.workspace.records
+      .filter(
+        (record) => record.runId === runId && record.stageSlug === slug,
+      )
+      .sort(
+        (left, right) =>
+          new Date(right.updatedAt).getTime() -
+          new Date(left.updatedAt).getTime(),
+      );
+  }
+
   function stageRecordCount(runId, slug) {
-    return state.workspace.records.filter(
-      (record) => record.runId === runId && record.stageSlug === slug,
-    ).length;
+    return stageRecords(runId, slug).length;
+  }
+
+  function stageImageCount(runId, slug) {
+    return stageRecords(runId, slug).reduce(
+      (count, record) =>
+        count +
+        attachmentsForRecord(record).filter((attachment) =>
+          isPreviewableImage(attachment.dataUrl),
+        ).length,
+      0,
+    );
   }
 
   function renderStageCard(template, run) {
     const stage = Model.stageState(run, template.slug);
     const assessment = deriveAssessment(run, stage);
-    const gates = stage.gates || [];
     const isSelected = template.slug === state.selectedStageSlug;
     const isCurrent = template.slug === run.currentStageSlug;
     const blockers = assessment.blockers || [];
     const warnings = assessment.warnings || [];
-    const nonFailureBlockerCodes = new Set([
+    const ordinaryPendingCodes = new Set([
       "GATE_PENDING",
       "EXECUTION_NOT_COMPLETE",
       "APPROVAL_NOT_GRANTED",
       "APPROVAL_STALE",
+      "PREDECESSOR_NOT_ACCEPTED",
     ]);
-    const hardBlockers = blockers.filter(
-      (blocker) => !nonFailureBlockerCodes.has(blocker.code),
+    const realFailureBlockers = blockers.filter(
+      (blocker) => !ordinaryPendingCodes.has(blocker.code),
     );
-    const leadingRisk =
-      hardBlockers[0] || warnings[0] || blockers[0] || null;
-    const exceptionRisk =
-      assessment.acceptedWithOverride ||
-      assessment.qualityStatus === "pass_with_waiver" ||
-      assessment.approvalStatus === "stale" ||
-      blockers.length > 0 ||
-      warnings.length > 0;
-    const execution = axisMeta("execution", assessment.executionStatus);
-    const quality = axisMeta("quality", assessment.qualityStatus);
-    const approval = axisMeta("approval", assessment.approvalStatus);
+    const hasFailure =
+      assessment.executionStatus === "blocked" ||
+      assessment.qualityStatus === "fail" ||
+      assessment.approvalStatus === "rejected" ||
+      realFailureBlockers.length > 0;
+    const needsAttention =
+      !hasFailure &&
+      (assessment.acceptedWithOverride ||
+        assessment.qualityStatus === "pass_with_waiver" ||
+        assessment.approvalStatus === "stale" ||
+        warnings.length > 0);
+    const records = stageRecords(run.id, template.slug);
+    const imageCount = stageImageCount(run.id, template.slug);
+    const latest = records[0] || null;
+    const stateLabel = hasFailure
+      ? "失败或明确阻断"
+      : needsAttention
+        ? "需关注"
+        : assessment.accepted
+          ? "已通过"
+          : isCurrent
+            ? "进行中"
+            : "正常";
     return `
       <button
-        class="stage-card gate2-card ${
+        class="stage-card gate2-card record-stage-card ${
           isSelected ? "is-selected" : ""
         } ${isCurrent ? "is-current" : ""} ${
-          hardBlockers.length
-            ? "risk-blocking"
-            : exceptionRisk
-              ? "risk-warning"
+          hasFailure
+            ? "has-failure"
+            : needsAttention
+              ? "needs-attention"
               : assessment.accepted
-                ? "is-accepted"
+                ? "has-passed"
                 : ""
         }"
         type="button"
         data-action="select-stage"
         data-stage="${escapeHtml(template.slug)}"
         aria-pressed="${isSelected}"
+        data-stage-visual-state="${hasFailure ? "failure" : needsAttention ? "attention" : isCurrent ? "current" : assessment.accepted ? "passed" : "neutral"}"
       >
         <span class="stage-order">${String(template.order).padStart(2, "0")}</span>
         <span class="stage-card-body">
           <strong>${escapeHtml(template.shortName)}</strong>
-          <small>${assessment.accepted ? "已接受" : "尚未接受"} · ${gates.length} 个 Gate</small>
+          <small>${records.length} 条记录 · ${imageCount} 张图片</small>
         </span>
         ${isCurrent ? '<span class="current-flag">当前</span>' : ""}
-        <span class="stage-axis-strip" aria-label="阶段状态">
-          <span class="stage-axis">
-            <span class="axis-label">执行</span>
-            <span class="axis-value semantic-${execution.tone}">${escapeHtml(execution.label)}</span>
+        <span class="stage-record-summary">
+          <span class="stage-record-latest">${
+            latest
+              ? escapeHtml(latest.title || "未命名记录")
+              : "尚无记录，点击后可添加"
+          }</span>
+          <span class="stage-compact-status is-${
+            hasFailure
+              ? "failure"
+              : needsAttention
+                ? "attention"
+                : assessment.accepted
+                  ? "passed"
+                  : "neutral"
+          }">
+            <span class="stage-status-dot" aria-hidden="true"></span>
+            ${escapeHtml(stateLabel)}
           </span>
-          <span class="stage-axis">
-            <span class="axis-label">质量</span>
-            <span class="axis-value semantic-${quality.tone}">${escapeHtml(quality.label)}</span>
-          </span>
-          <span class="stage-axis">
-            <span class="axis-label">批准</span>
-            <span class="axis-value semantic-${approval.tone}">${escapeHtml(approval.label)}</span>
-          </span>
-        </span>
-        <span class="stage-card-footer">
-          ${renderGateSummary(assessment.gateSummary)}
-          ${
-            leadingRisk
-              ? `<span class="stage-leading-blocker ${
-                  hardBlockers.length ? "" : "is-warning"
-                }">${escapeHtml(findingText(leadingRisk))}</span>`
-              : `<span class="stage-leading-blocker is-warning">${
-                  stageRecordCount(run.id, template.slug)
-                    ? `${stageRecordCount(run.id, template.slug)} 条阶段记录`
-                    : "等待下一项审查"
-                }</span>`
-          }
         </span>
       </button>
     `;
@@ -12897,10 +13701,10 @@ body.is-previewing {
       <section class="panel flow-panel" aria-labelledby="flow-map-title">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">COMPANY FLOW · 14 STAGES</p>
-            <h2 id="flow-map-title">流程地图</h2>
+            <p class="eyebrow">COMPANY FLOW · RECORD VIEW</p>
+            <h2 id="flow-map-title">流程记录</h2>
           </div>
-          <span class="panel-hint">选择阶段查看细节</span>
+          <span class="panel-hint">选择阶段，记录进展和截图</span>
         </div>
         <div class="flow-map">
           <div class="flow-mainline">
@@ -13092,97 +13896,112 @@ body.is-previewing {
     const execution = axisMeta("execution", assessment.executionStatus);
     const quality = axisMeta("quality", assessment.qualityStatus);
     const approval = axisMeta("approval", assessment.approvalStatus);
+    const records = stageRecords(run.id, template.slug);
+    const images = stageImageCount(run.id, template.slug);
     return `
-      <section class="panel stage-panel" aria-labelledby="stage-detail-title">
+      <section class="panel stage-panel lightweight-stage-panel" aria-labelledby="stage-detail-title">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">STAGE ${String(template.order).padStart(2, "0")}</p>
+            <p class="eyebrow">STAGE ${String(template.order).padStart(2, "0")} · RECORDS</p>
             <h2 id="stage-detail-title">${escapeHtml(template.name)}</h2>
             <p class="panel-description">${escapeHtml(template.description)}</p>
           </div>
           <div class="panel-heading-actions">
-            <span class="status-pill ${
-              assessment.accepted
-                ? assessment.acceptedWithOverride
-                  ? "is-review"
-                  : "is-success"
-                : (assessment.blockers || []).length
-                  ? "is-blocked"
-                  : ""
-            }">${assessment.accepted ? (assessment.acceptedWithOverride ? "Override 接受" : "已接受") : "尚未接受"}</span>
+            <span class="record-count-pill">${records.length} 条记录 · ${images} 张图片</span>
             <button class="btn ${isCurrent ? "" : "btn-secondary"}" type="button" data-action="mark-current" ${
               isCurrent ? "disabled" : ""
             }>${isCurrent ? "当前阶段" : "设为当前阶段"}</button>
           </div>
         </div>
-        <div class="stage-state-overview" data-stage-state-axes>
-          <article class="state-axis-card is-${execution.tone}">
-            <span>EXECUTION · 执行状态</span>
-            <strong>${escapeHtml(execution.label)}</strong>
-          </article>
-          <article class="state-axis-card is-${quality.tone}">
-            <span>QUALITY · 质量状态</span>
-            <strong>${escapeHtml(quality.label)}</strong>
-          </article>
-          <article class="state-axis-card is-${approval.tone}">
-            <span>APPROVAL · 批准状态</span>
-            <strong>${escapeHtml(approval.label)}</strong>
-          </article>
+        <div class="stage-record-actions" aria-label="阶段记录快捷操作">
+          <button class="btn btn-primary" type="button" data-action="new-record" data-record-type="progress">
+            添加阶段记录
+          </button>
+          <button class="btn" type="button" data-action="new-record-with-image" data-record-type="progress">
+            添加截图
+          </button>
+          <button class="btn" type="button" data-action="switch-workspace-view" data-view="weekly">
+            放进周报
+          </button>
         </div>
-        ${
-          assessment.accepted
-            ? `<div class="stage-accepted-banner ${
-                assessment.acceptedWithOverride ? "is-override" : ""
-              }">${assessment.acceptedWithOverride ? "阶段已通过 Override 接受，底层风险仍需跟踪。" : "阶段已满足执行、质量、批准和前置依赖要求。"}</div>`
-            : ""
-        }
-        ${renderStageBlockers(assessment)}
-        <div class="stage-action-bar" data-stage-actions>
-          <span class="action-context">所有状态变化都会写入审计历史；完成执行不会自动代表质量通过或获得批准。</span>
-          ${executionActions(stage, assessment)}
-          ${approvalActions(stage, assessment)}
-          ${
-            (assessment.blockers || []).some((item) => item.overrideable)
-              ? `<button class="btn" type="button" data-action="open-stage-override" data-stage="${escapeHtml(stage.slug)}">申请 Override</button>`
-              : ""
-          }
+        <div class="stage-fields lightweight-stage-fields">
+          <label class="field">
+            <span>下一步</span>
+            <textarea
+              rows="3"
+              maxlength="1000"
+              data-action="stage-next"
+              data-stage="${escapeHtml(stage.slug)}"
+              placeholder="下一条准备执行的动作"
+            >${escapeHtml(stage.nextStep)}</textarea>
+          </label>
+          <label class="field">
+            <span>阶段笔记</span>
+            <textarea
+              rows="5"
+              maxlength="10000"
+              data-action="stage-note"
+              data-stage="${escapeHtml(stage.slug)}"
+              placeholder="记录本阶段做了什么、看到什么结果，以及需要保留的命令或结论"
+            >${escapeHtml(stage.note)}</textarea>
+          </label>
         </div>
-        <div class="stage-editor">
-          <div class="stage-fields">
-            <label class="field">
-              <span>下一步</span>
-              <textarea
-                rows="3"
-                maxlength="1000"
-                data-action="stage-next"
-                data-stage="${escapeHtml(stage.slug)}"
-                placeholder="下一条可执行动作、负责人或等待条件"
-              >${escapeHtml(stage.nextStep)}</textarea>
-            </label>
-            <label class="field">
-              <span>阶段笔记</span>
-              <textarea
-                rows="5"
-                maxlength="10000"
-                data-action="stage-note"
-                data-stage="${escapeHtml(stage.slug)}"
-                placeholder="记录上下文、命令、判断和复盘结论"
-              >${escapeHtml(stage.note)}</textarea>
-            </label>
-            ${renderOverrideAudit(stage)}
-          </div>
-          <div class="gate2-list">
-            <div class="section-label">
-              <span>Gate 2.0 检查</span>
-              <small>${escapeHtml(
-                `${Number((assessment.gateSummary || {}).pass || 0)} pass / ${stage.gates.length} total`,
-              )}</small>
+        <details class="advanced-audit" data-advanced-audit ${state.advancedAuditOpen ? "open" : ""}>
+          <summary data-action="toggle-advanced-audit">
+            <span>
+              <strong>高级签核信息</strong>
+              <small>Gate、执行/质量/批准、Waiver、Override 与历史阻断数据</small>
+            </span>
+            <span class="advanced-summary-status">${escapeHtml(execution.label)} · ${escapeHtml(quality.label)} · ${escapeHtml(approval.label)}</span>
+          </summary>
+          <div class="advanced-audit-content">
+            <div class="stage-state-overview" data-stage-state-axes>
+              <article class="state-axis-card is-${execution.tone}">
+                <span>EXECUTION · 执行状态</span>
+                <strong>${escapeHtml(execution.label)}</strong>
+              </article>
+              <article class="state-axis-card is-${quality.tone}">
+                <span>QUALITY · 质量状态</span>
+                <strong>${escapeHtml(quality.label)}</strong>
+              </article>
+              <article class="state-axis-card is-${approval.tone}">
+                <span>APPROVAL · 批准状态</span>
+                <strong>${escapeHtml(approval.label)}</strong>
+              </article>
             </div>
-            ${stage.gates
-              .map((gate, index) => renderGate(gate, index, stage))
-              .join("")}
+            ${renderGateSummary(assessment.gateSummary)}
+            ${
+              assessment.accepted
+                ? `<div class="stage-accepted-banner ${
+                    assessment.acceptedWithOverride ? "is-override" : ""
+                  }">${assessment.acceptedWithOverride ? "阶段已通过 Override 接受，底层风险仍需跟踪。" : "阶段已满足执行、质量、批准和前置依赖要求。"}</div>`
+                : ""
+            }
+            ${renderStageBlockers(assessment)}
+            <div class="stage-action-bar" data-stage-actions>
+              <span class="action-context">此处保留完整审计逻辑；状态变化仍会写入历史，界面折叠不会修改数据。</span>
+              ${executionActions(stage, assessment)}
+              ${approvalActions(stage, assessment)}
+              ${
+                (assessment.blockers || []).some((item) => item.overrideable)
+                  ? `<button class="btn" type="button" data-action="open-stage-override" data-stage="${escapeHtml(stage.slug)}">申请 Override</button>`
+                  : ""
+              }
+            </div>
+            ${renderOverrideAudit(stage)}
+            <div class="gate2-list">
+              <div class="section-label">
+                <span>Gate 2.0 检查</span>
+                <small>${escapeHtml(
+                  `${Number((assessment.gateSummary || {}).pass || 0)} pass / ${stage.gates.length} total`,
+                )}</small>
+              </div>
+              ${stage.gates
+                .map((gate, index) => renderGate(gate, index, stage))
+                .join("")}
+            </div>
           </div>
-        </div>
+        </details>
       </section>
     `;
   }
@@ -13280,12 +14099,22 @@ body.is-previewing {
     `;
   }
 
-  function renderRecordCard(record) {
+  function renderRecordCard(record, options = {}) {
+    options =
+      options && typeof options === "object" && !Array.isArray(options)
+        ? options
+        : {};
     const meta = Model.RECORD_TYPES[record.type];
     const template = Model.stageTemplate(record.stageSlug);
     const attachments = attachmentsForRecord(record);
+    const visibleTags = (record.tags || []).filter(
+      (tag) =>
+        !options.hideWeeklyTags ||
+        (!String(tag).startsWith(WEEKLY_TAG_PREFIX) &&
+          !String(tag).startsWith(WEEK_TAG_PREFIX)),
+    );
     return `
-      <article class="record-card" data-record-id="${escapeHtml(record.id)}">
+      <article class="record-card ${escapeHtml(options.className || "")}" data-record-id="${escapeHtml(record.id)}">
         <header>
           <div class="record-kind kind-${escapeHtml(record.type)}">
             <span aria-hidden="true">${escapeHtml(meta.icon)}</span>
@@ -13319,8 +14148,8 @@ body.is-previewing {
             : ""
         }
         ${
-          record.tags && record.tags.length
-            ? `<div class="tag-list">${record.tags
+          visibleTags.length
+            ? `<div class="tag-list">${visibleTags
                 .map((tag) => `<span>#${escapeHtml(tag)}</span>`)
                 .join("")}</div>`
             : ""
@@ -13445,6 +14274,157 @@ body.is-previewing {
                 </div>
               `
           }
+        </div>
+      </section>
+    `;
+  }
+
+  function weeklyRecordsForSection(runId, sectionId, weekDate = state.weeklyDate) {
+    return state.workspace.records
+      .filter(
+        (record) =>
+          record.runId === runId &&
+          weeklySectionIdForRecord(record) === sectionId &&
+          weeklyDateForRecord(record) === weekDate,
+      )
+      .sort(
+        (left, right) =>
+          new Date(right.updatedAt).getTime() -
+          new Date(left.updatedAt).getTime(),
+      );
+  }
+
+  function renderWeeklySection(run, section) {
+    const records = weeklyRecordsForSection(
+      run.id,
+      section.id,
+      state.weeklyDate,
+    );
+    const images = records.reduce(
+      (count, record) =>
+        count +
+        attachmentsForRecord(record).filter((attachment) =>
+          isPreviewableImage(attachment.dataUrl),
+        ).length,
+      0,
+    );
+    return `
+      <section class="weekly-section weekly-section-${escapeHtml(
+        section.id,
+      )}" data-weekly-section="${escapeHtml(section.id)}" aria-labelledby="weekly-${escapeHtml(
+        section.id,
+      )}-title">
+        <header class="weekly-section-header">
+          <div>
+            <p class="weekly-ppt-label">${escapeHtml(section.pptLabel)}</p>
+            <h2 id="weekly-${escapeHtml(section.id)}-title">${escapeHtml(
+              section.label,
+            )}</h2>
+            <p>${escapeHtml(section.description)}</p>
+          </div>
+          <span class="weekly-section-count">${records.length} 条 · ${images} 图</span>
+        </header>
+        <div class="weekly-section-actions">
+          <button
+            class="btn btn-primary btn-small"
+            type="button"
+            data-action="new-weekly-record"
+            data-weekly-section="${escapeHtml(section.id)}"
+          >添加记录</button>
+          <button
+            class="btn btn-small"
+            type="button"
+            data-action="new-weekly-image"
+            data-weekly-section="${escapeHtml(section.id)}"
+          >添加图片</button>
+        </div>
+        <div class="weekly-record-list">
+          ${
+            records.length
+              ? records
+                  .map((record) =>
+                    renderRecordCard(record, {
+                      className: "weekly-record-card",
+                      hideWeeklyTags: true,
+                    }),
+                  )
+                  .join("")
+              : `
+                <div class="weekly-empty">
+                  <span aria-hidden="true">${section.imageFirst ? "▧" : "＋"}</span>
+                  <p>本周这里还没有记录。</p>
+                  <small>${escapeHtml(section.prompt)}</small>
+                </div>
+              `
+          }
+        </div>
+      </section>
+    `;
+  }
+
+  function renderWeeklyView(run) {
+    const currentTemplate =
+      Model.stageTemplate(run.currentStageSlug) || Model.STAGE_TEMPLATE[0];
+    const weeklyRecords = WEEKLY_SECTIONS.flatMap((section) =>
+      weeklyRecordsForSection(run.id, section.id, state.weeklyDate),
+    );
+    const weeklyImages = weeklyRecords.reduce(
+      (count, record) =>
+        count +
+        attachmentsForRecord(record).filter((attachment) =>
+          isPreviewableImage(attachment.dataUrl),
+        ).length,
+      0,
+    );
+    return `
+      <section class="weekly-view" data-view="weekly" aria-labelledby="weekly-view-title">
+        <header class="weekly-hero">
+          <div>
+            <p class="eyebrow">WEEKLY REPORT · SIMPLE RECORDS</p>
+            <h1 id="weekly-view-title">周报记录</h1>
+            <p>按公司模板整理本周文字和截图。这里不做 Gate、审批或自动阻断。</p>
+          </div>
+          <div class="weekly-total">
+            <strong>${weeklyRecords.length}</strong>
+            <span>条记录 · ${weeklyImages} 张图片</span>
+          </div>
+        </header>
+        <section class="weekly-context" aria-label="周报基本信息">
+          <label class="field">
+            <span>周报日期</span>
+            <input type="date" value="${escapeHtml(
+              state.weeklyDate,
+            )}" data-action="weekly-date" />
+          </label>
+          <label class="field">
+            <span>记录人</span>
+            <input
+              value="${escapeHtml(run.owner || "")}"
+              data-action="run-field"
+              data-field="owner"
+              maxlength="80"
+              placeholder="未填写负责人"
+            />
+          </label>
+          <div class="weekly-context-item">
+            <span>当前 Flow</span>
+            <strong>${escapeHtml(run.name)}</strong>
+            <small>${escapeHtml(run.design || "未填写设计名")}</small>
+          </div>
+          <div class="weekly-context-item">
+            <span>当前阶段</span>
+            <strong>${escapeHtml(currentTemplate.shortName)}</strong>
+            <small>Stage ${String(currentTemplate.order).padStart(2, "0")}</small>
+          </div>
+        </section>
+        <div class="weekly-reference-note">
+          <strong>来自周报模板的栏目</strong>
+          <span>问题与原因、Floorplan、最新 Density、Route 真 DRC、STA 汇总；下周计划为可选。</span>
+        </div>
+        <div class="weekly-section-grid">
+          ${WEEKLY_SECTIONS.map((section) =>
+            renderWeeklySection(run, section),
+          ).join("")}
         </div>
       </section>
     `;
@@ -13763,6 +14743,48 @@ body.is-previewing {
     return state.modal && state.modal.type === "record" ? state.modal : null;
   }
 
+  function recordModalDefaults(modal, existing = null) {
+    const inferredSectionId = existing
+      ? weeklySectionIdForRecord(existing)
+      : modal.weeklySection || "";
+    const definition = weeklySection(inferredSectionId);
+    const weekDate =
+      (existing && weeklyDateForRecord(existing)) ||
+      modal.weekDate ||
+      state.weeklyDate;
+    const prefill = modal.prefill || {};
+    const extraTags = Array.isArray(prefill.tags) ? prefill.tags : [];
+    const tags = existing
+      ? existing.tags || []
+      : definition
+        ? weeklyTags(definition.id, weekDate, extraTags)
+        : extraTags;
+    return {
+      definition,
+      weekDate,
+      type: existing
+        ? existing.type
+        : definition
+          ? definition.recordType
+          : modal.recordType || "progress",
+      stageSlug: existing
+        ? existing.stageSlug
+        : modal.stageSlug ||
+          (definition && definition.stageSlug) ||
+          state.selectedStageSlug,
+      status: existing ? existing.status : prefill.status || "open",
+      priority: existing ? existing.priority : prefill.priority || "medium",
+      title: existing
+        ? existing.title
+        : prefill.title ||
+          (definition ? `${definition.label} · ${weekDate}` : ""),
+      content: existing ? existing.content : prefill.content || "",
+      tags,
+      dueAt:
+        existing && existing.dueAt ? String(existing.dueAt).slice(0, 10) : "",
+    };
+  }
+
   function createRecordModal(options) {
     return {
       type: "record",
@@ -13831,18 +14853,16 @@ body.is-previewing {
     const existing = modal.recordId
       ? state.workspace.records.find((record) => record.id === modal.recordId)
       : null;
+    const defaults = recordModalDefaults(modal, existing);
     const baseline = {
-      type: existing ? existing.type : modal.recordType || "progress",
-      stageSlug: existing
-        ? existing.stageSlug
-        : modal.stageSlug || state.selectedStageSlug,
-      status: existing ? existing.status : "open",
-      priority: existing ? existing.priority : "medium",
-      title: existing ? existing.title : "",
-      content: existing ? existing.content : "",
-      tags: existing ? (existing.tags || []).join(", ") : "",
-      dueAt:
-        existing && existing.dueAt ? String(existing.dueAt).slice(0, 10) : "",
+      type: defaults.type,
+      stageSlug: defaults.stageSlug,
+      status: defaults.status,
+      priority: defaults.priority,
+      title: defaults.title,
+      content: defaults.content,
+      tags: defaults.tags.join(", "),
+      dueAt: defaults.dueAt,
     };
     return Object.entries(baseline).some(([name, value]) => {
       const element = Array.from(form.elements || []).find(
@@ -14007,19 +15027,35 @@ body.is-previewing {
     const existing = modal.recordId
       ? state.workspace.records.find((record) => record.id === modal.recordId)
       : null;
-    const type = existing ? existing.type : modal.recordType || "progress";
-    const stageSlug = existing
-      ? existing.stageSlug
-      : modal.stageSlug || state.selectedStageSlug;
+    const defaults = recordModalDefaults(modal, existing);
+    const type = defaults.type;
+    const stageSlug = defaults.stageSlug;
+    const weeklyDefinition = defaults.definition;
     const attachments = existing ? attachmentsForRecord(existing) : [];
     return `
       <div class="modal" role="presentation">
         <button class="modal-backdrop" type="button" data-action="close-modal" aria-label="关闭"></button>
-        <section class="modal-card modal-record" role="dialog" aria-modal="true" aria-labelledby="record-form-title">
+        <section class="modal-card modal-record ${
+          weeklyDefinition ? "modal-weekly-record" : ""
+        }" role="dialog" aria-modal="true" aria-labelledby="record-form-title">
           <header>
             <div>
-              <p class="eyebrow">${existing ? "EDIT RECORD" : "NEW RECORD"}</p>
-              <h2 id="record-form-title">${existing ? "编辑工作记录" : "添加工作记录"}</h2>
+              <p class="eyebrow">${
+                weeklyDefinition
+                  ? "WEEKLY RECORD"
+                  : existing
+                    ? "EDIT RECORD"
+                    : "NEW RECORD"
+              }</p>
+              <h2 id="record-form-title">${
+                weeklyDefinition
+                  ? `${existing ? "编辑" : "添加"}周报记录 · ${escapeHtml(
+                      weeklyDefinition.label,
+                    )}`
+                  : existing
+                    ? "编辑工作记录"
+                    : "添加工作记录"
+              }</h2>
             </div>
             <div class="modal-header-actions">
               <button class="btn btn-small" type="button" data-action="import" title="暂存当前表单和待添加附件，打开 JSON 导入预检">导入预检</button>
@@ -14030,99 +15066,156 @@ body.is-previewing {
             existing ? existing.id : "",
           )}">
             ${renderFormFindings(modal.findings)}
-            <div class="form-grid">
-              <label class="field">
-                <span>类型</span>
-                <select name="type">
-                  ${Object.entries(Model.RECORD_TYPES)
-                    .map(
-                      ([value, meta]) =>
-                        `<option value="${escapeHtml(value)}" ${
-                          value === type ? "selected" : ""
-                        }>${escapeHtml(meta.label)}</option>`,
-                    )
-                    .join("")}
-                </select>
-              </label>
-              <label class="field">
-                <span>所属阶段</span>
-                <select name="stageSlug">
-                  ${Model.STAGE_TEMPLATE.map(
-                    (template) =>
-                      `<option value="${escapeHtml(template.slug)}" ${
-                        template.slug === stageSlug ? "selected" : ""
-                      }>${String(template.order).padStart(2, "0")} · ${escapeHtml(
-                        template.name,
-                      )}</option>`,
-                  ).join("")}
-                </select>
-              </label>
-              <label class="field">
-                <span>状态</span>
-                <select name="status">
-                  ${[
-                    ["open", "待处理"],
-                    ["in-progress", "进行中"],
-                    ["blocked", "阻塞"],
-                    ["review", "待复核"],
-                    ["done", "已完成"],
-                    ["closed", "已关闭"],
-                  ]
-                    .map(
-                      ([value, label]) =>
-                        `<option value="${value}" ${
-                          existing && existing.status === value ? "selected" : ""
-                        }>${label}</option>`,
-                    )
-                    .join("")}
-                </select>
-              </label>
-              <label class="field">
-                <span>优先级</span>
-                <select name="priority">
-                  ${[
-                    ["low", "低"],
-                    ["medium", "中"],
-                    ["high", "高"],
-                    ["critical", "紧急"],
-                  ]
-                    .map(
-                      ([value, label]) =>
-                        `<option value="${value}" ${
-                          (existing ? existing.priority : "medium") === value
-                            ? "selected"
-                            : ""
-                        }>${label}</option>`,
-                    )
-                    .join("")}
-                </select>
-              </label>
-            </div>
+            ${
+              weeklyDefinition
+                ? `
+                  <div class="weekly-form-context">
+                    <div><span>周报日期</span><strong>${escapeHtml(
+                      defaults.weekDate,
+                    )}</strong></div>
+                    <div><span>当前 Flow</span><strong>${escapeHtml(
+                      run.name,
+                    )}</strong></div>
+                    <div><span>栏目</span><strong>${escapeHtml(
+                      weeklyDefinition.label,
+                    )}</strong></div>
+                  </div>
+                  <input type="hidden" name="type" value="${escapeHtml(
+                    defaults.type,
+                  )}" />
+                  <input type="hidden" name="status" value="${escapeHtml(
+                    defaults.status,
+                  )}" />
+                  <input type="hidden" name="priority" value="${escapeHtml(
+                    defaults.priority,
+                  )}" />
+                  <label class="field">
+                    <span>所属阶段</span>
+                    <select name="stageSlug">
+                      ${Model.STAGE_TEMPLATE.map(
+                        (template) =>
+                          `<option value="${escapeHtml(template.slug)}" ${
+                            template.slug === stageSlug ? "selected" : ""
+                          }>${String(template.order).padStart(2, "0")} · ${escapeHtml(
+                            template.name,
+                          )}</option>`,
+                      ).join("")}
+                    </select>
+                  </label>
+                `
+                : `
+                  <div class="form-grid">
+                    <label class="field">
+                      <span>类型</span>
+                      <select name="type">
+                        ${Object.entries(Model.RECORD_TYPES)
+                          .map(
+                            ([value, meta]) =>
+                              `<option value="${escapeHtml(value)}" ${
+                                value === type ? "selected" : ""
+                              }>${escapeHtml(meta.label)}</option>`,
+                          )
+                          .join("")}
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span>所属阶段</span>
+                      <select name="stageSlug">
+                        ${Model.STAGE_TEMPLATE.map(
+                          (template) =>
+                            `<option value="${escapeHtml(template.slug)}" ${
+                              template.slug === stageSlug ? "selected" : ""
+                            }>${String(template.order).padStart(2, "0")} · ${escapeHtml(
+                              template.name,
+                            )}</option>`,
+                        ).join("")}
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span>状态</span>
+                      <select name="status">
+                        ${[
+                          ["open", "待处理"],
+                          ["in-progress", "进行中"],
+                          ["blocked", "阻塞"],
+                          ["review", "待复核"],
+                          ["done", "已完成"],
+                          ["closed", "已关闭"],
+                        ]
+                          .map(
+                            ([value, label]) =>
+                              `<option value="${value}" ${
+                                defaults.status === value ? "selected" : ""
+                              }>${label}</option>`,
+                          )
+                          .join("")}
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span>优先级</span>
+                      <select name="priority">
+                        ${[
+                          ["low", "低"],
+                          ["medium", "中"],
+                          ["high", "高"],
+                          ["critical", "紧急"],
+                        ]
+                          .map(
+                            ([value, label]) =>
+                              `<option value="${value}" ${
+                                defaults.priority === value ? "selected" : ""
+                              }>${label}</option>`,
+                          )
+                          .join("")}
+                      </select>
+                    </label>
+                  </div>
+                `
+            }
             <label class="field">
               <span>标题</span>
               <input name="title" required maxlength="120" value="${escapeHtml(
-                existing ? existing.title : "",
-              )}" placeholder="一句话说明进展、问题或结论" />
+                defaults.title,
+              )}" placeholder="${
+                weeklyDefinition
+                  ? "一句话概括这一项周报内容"
+                  : "一句话说明进展、问题或结论"
+              }" />
             </label>
             <label class="field">
-              <span>详细内容</span>
-              <textarea name="content" rows="8" maxlength="50000" placeholder="现象、分析、命令、结果、下一步…">${escapeHtml(
-                existing ? existing.content : "",
+              <span>${weeklyDefinition ? "记录内容" : "详细内容"}</span>
+              <textarea name="content" rows="8" maxlength="50000" placeholder="${escapeHtml(
+                weeklyDefinition
+                  ? weeklyDefinition.prompt
+                  : "现象、分析、命令、结果、下一步…",
+              )}">${escapeHtml(
+                defaults.content,
               )}</textarea>
+              ${
+                weeklyDefinition
+                  ? `<small>${escapeHtml(
+                      weeklyDefinition.description,
+                    )} 不需要填写 Gate、严重级别或批准信息。</small>`
+                  : ""
+              }
             </label>
             <div class="form-grid">
-              <label class="field">
-                <span>标签</span>
-                <input name="tags" value="${escapeHtml(
-                  existing ? (existing.tags || []).join(", ") : "",
-                )}" placeholder="drc, timing, macro（逗号分隔）" />
-              </label>
+              ${
+                weeklyDefinition
+                  ? `<input type="hidden" name="tags" value="${escapeHtml(
+                      defaults.tags.join(", "),
+                    )}" />`
+                  : `<label class="field">
+                      <span>标签</span>
+                      <input name="tags" value="${escapeHtml(
+                        defaults.tags.join(", "),
+                      )}" placeholder="drc, timing, macro（逗号分隔）" />
+                    </label>`
+              }
               <label class="field">
                 <span>截止日期</span>
                 <input name="dueAt" type="date" value="${escapeHtml(
-                  existing && existing.dueAt
-                    ? String(existing.dueAt).slice(0, 10)
-                    : "",
+                  defaults.dueAt,
                 )}" />
               </label>
             </div>
@@ -14828,7 +15921,13 @@ body.is-previewing {
     const historicalProtection = Boolean(
       run.templateVersion && run.templateVersion !== "company-ppt-v1",
     );
-    document.title = `${state.workspaceView === "knowledge" ? "知识库 · " : ""}${run.name} · FlowTrace`;
+    const viewTitle =
+      state.workspaceView === "knowledge"
+        ? "知识库 · "
+        : state.workspaceView === "weekly"
+          ? "周报记录 · "
+          : "";
+    document.title = `${viewTitle}${run.name} · FlowTrace`;
     document.body.className = "is-connected";
     root.innerHTML = `
       <div class="app-shell">
@@ -14848,6 +15947,8 @@ body.is-previewing {
               ? renderHistoricalProtectedView(run)
               : state.workspaceView === "knowledge"
               ? renderKnowledgeView(run)
+              : state.workspaceView === "weekly"
+                ? renderWeeklyView(run)
               : `
                 ${renderRunHeader(run)}
                 ${renderMetrics(run)}
@@ -15500,8 +16601,17 @@ body.is-previewing {
     ) {
       event.preventDefault();
       state.modal = createRecordModal({
-        recordType: recordTypeForGlobalPaste(),
+        recordType:
+          state.workspaceView === "weekly"
+            ? weeklySection("summary").recordType
+            : recordTypeForGlobalPaste(),
         stageSlug: state.selectedStageSlug,
+        ...(state.workspaceView === "weekly"
+          ? {
+              weeklySection: "summary",
+              weekDate: state.weeklyDate,
+            }
+          : {}),
       });
       render();
       focusRecordModal(true);
@@ -16210,6 +17320,9 @@ body.is-previewing {
     if (action === "select-stage") {
       state.selectedStageSlug = target.dataset.stage;
       render();
+    } else if (action === "toggle-advanced-audit") {
+      const details = target.closest("[data-advanced-audit]");
+      state.advancedAuditOpen = details ? !details.open : false;
     } else if (action === "edit-gate-result") {
       const run = activeRun();
       openAuditModal(
@@ -16259,7 +17372,11 @@ body.is-previewing {
         target,
       );
     } else if (action === "switch-workspace-view") {
-      state.workspaceView = target.dataset.view === "knowledge" ? "knowledge" : "flow";
+      state.workspaceView = ["flow", "weekly", "knowledge"].includes(
+        target.dataset.view,
+      )
+        ? target.dataset.view
+        : "flow";
       state.sidebarOpen = false;
       render();
     } else if (action === "mark-current") {
@@ -16303,6 +17420,25 @@ body.is-previewing {
         recordType,
         stageSlug: state.selectedStageSlug,
       });
+    } else if (
+      action === "new-weekly-record" ||
+      action === "new-weekly-image"
+    ) {
+      const definition = weeklySection(target.dataset.weeklySection);
+      if (!definition) return;
+      const options = {
+        weeklySection: definition.id,
+        weekDate: state.weeklyDate,
+        recordType: definition.recordType,
+        stageSlug: definition.stageSlug || state.selectedStageSlug,
+      };
+      if (action === "new-weekly-image") {
+        openRecordWithImage(options);
+      } else {
+        state.modal = createRecordModal(options);
+        render();
+        focusRecordModal();
+      }
     } else if (action === "new-knowledge-with-image") {
       openRecordWithImage({
         recordType: "knowledge",
@@ -16424,6 +17560,11 @@ body.is-previewing {
         field === "nextStep" ? 1000 : 10000,
       );
       markDirty(run, stage);
+      render();
+    } else if (action === "weekly-date") {
+      const value = String(target.value || "");
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return;
+      state.weeklyDate = value;
       render();
     } else if (action === "run-field") {
       const field = target.dataset.field;
